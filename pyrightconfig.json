@@ -1,0 +1,8 @@
+{
+  "typeCheckingMode": "basic",
+  "reportMissingImports": false,
+  "include": [
+    "OpenShockPY",
+    "tests"
+  ]
+}

@@ -56,11 +56,3 @@ Homepage = "https://github.com/NanashiTheNameless/OpenShockPY"
 Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
 "GitHub Sponsor" = "https://github.com/sponsors/NanashiTheNameless"
 "Buy Me a Coffee" = "https://buymeacoffee.com/NamelessNanashi"
-
-[tool.pyright]
-# Relax type checking for external test-only dependencies not installed in lint context
-typeCheckingMode = "basic"
-
-[tool.pyright.diagnosticSeverityOverrides]
-# Avoid failing CI due to missing dev-only modules like pytest
-reportMissingImports = "none"
