@@ -60,7 +60,3 @@ Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
 
 [tool.setuptools.package-data]
 OpenShockPY = ["py.typed"]
-
-[tool.bandit]
-skips = ["B101"]  # B101: assert statements are acceptable in tests (pytest)
-exclude_dirs = ["tests"]

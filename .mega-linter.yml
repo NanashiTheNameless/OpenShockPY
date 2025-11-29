@@ -24,6 +24,7 @@ DISABLE_LINTERS:
   - PYTHON_MYPY # Not worth effort to make work will fix it eventually
 
 PYTHON_FLAKE8_CONFIG_FILE: .flake8
+PYTHON_BANDIT_CONFIG_FILE: .bandit
 MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdown lint.json
 
 SHOW_ELAPSED_TIME: true
