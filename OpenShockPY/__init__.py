@@ -12,9 +12,16 @@ from .client import (
     ShockerListResponse,
     ShockerResponse,
 )
+try:
+    from .async_client import AsyncOpenShockClient
+except Exception:
+    # Optional dependency (httpx) may not be available.
+    AsyncOpenShockClient = None  # type: ignore
 
 __all__ = [
     "OpenShockClient",
+    # Async client may not be available if optional deps aren't installed
+    "AsyncOpenShockClient",
     "OpenShockError",
     # Type definitions for IDE autocompletion
     "Device",

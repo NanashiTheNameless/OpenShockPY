@@ -36,7 +36,7 @@ def main() -> int:
     )
     parser.add_argument(
         "command",
-        choices=["devices", "shockers", "shock", "vibrate", "beep", "login", "logout"],
+        choices=["devices", "shockers", "shock", "vibrate", "beep", "stop", "login", "logout"],
         help="Command to run",
     )
     parser.add_argument("--api-key", dest="api_key", help="OpenShock API key")
@@ -100,7 +100,7 @@ def main() -> int:
         client = OpenShockClient(
             api_key=api_key,
             base_url=args.base_url,
-            user_agent="OpenShockPY-CLI/0.0.0.6",
+            user_agent="OpenShockPY-CLI/0.0.0.7",
         )
         data = None
         if args.command == "devices":
@@ -110,15 +110,31 @@ def main() -> int:
         elif args.command == "shock":
             if not args.shocker_id:
                 raise OpenShockError("--shocker-id is required for shock")
-            data = client.shock(args.shocker_id, args.intensity, args.duration)
+            if args.shocker_id.lower() == "all":
+                data = client.shock_all(args.intensity, args.duration)
+            else:
+                data = client.shock(args.shocker_id, args.intensity, args.duration)
         elif args.command == "vibrate":
             if not args.shocker_id:
                 raise OpenShockError("--shocker-id is required for vibrate")
-            data = client.vibrate(args.shocker_id, args.intensity, args.duration)
+            if args.shocker_id.lower() == "all":
+                data = client.vibrate_all(args.intensity, args.duration)
+            else:
+                data = client.vibrate(args.shocker_id, args.intensity, args.duration)
         elif args.command == "beep":
             if not args.shocker_id:
                 raise OpenShockError("--shocker-id is required for beep")
-            data = client.beep(args.shocker_id, args.duration)
+            if args.shocker_id.lower() == "all":
+                data = client.beep_all(args.duration)
+            else:
+                data = client.beep(args.shocker_id, args.duration)
+        elif args.command == "stop":
+            if not args.shocker_id:
+                raise OpenShockError("--shocker-id is required for stop")
+            if args.shocker_id.lower() == "all":
+                data = client.stop_all()
+            else:
+                data = client.stop(args.shocker_id)
         if data is not None:
             print(json.dumps(data, indent=2))
         return 0

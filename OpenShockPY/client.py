@@ -420,3 +420,143 @@ class OpenShockClient:
             OpenShockError: If the API returns an error status code.
         """
         return self.send_action(shocker_id, "Stop", 0, 300, False, api_key)
+
+    def send_action_all(
+        self,
+        control_type: ControlType,
+        intensity: int = 0,
+        duration: int = 1000,
+        exclusive: bool = False,
+        api_key: Optional[str] = None,
+    ) -> Optional[ActionResponse]:
+        """Send an action command to all shockers.
+
+        Args:
+            control_type: Type of action - 'Shock', 'Vibrate', 'Sound', or 'Stop'.
+            intensity: Intensity level (0-100).
+            duration: Duration in milliseconds (300-65535).
+            exclusive: Whether to run exclusively.
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        # Get all shockers
+        shockers_response = self.list_shockers(api_key=api_key)
+        devices = shockers_response.get("data", [])
+        
+        # Extract all shockers from all devices
+        all_shockers = []
+        for device in devices:
+            all_shockers.extend(device.get("shockers", []))
+        
+        if not all_shockers:
+            raise OpenShockError("No shockers found")
+        
+        duration = max(300, min(65535, duration))
+        shocks_list = [
+            {
+                "id": shocker["id"],
+                "type": control_type,
+                "intensity": intensity,
+                "duration": duration,
+                "exclusive": exclusive,
+            }
+            for shocker in all_shockers
+        ]
+        
+        payload = {
+            "shocks": shocks_list,
+            "customName": None,
+        }
+        
+        resp = self._session.post(
+            self._url("/2/shockers/control"),
+            json=payload,
+            headers=self._get_headers(api_key),
+            timeout=self.timeout,
+        )
+        return self._handle(resp)
+
+    def shock_all(
+        self,
+        intensity: int = 50,
+        duration: int = 1000,
+        api_key: Optional[str] = None,
+    ) -> Optional[ActionResponse]:
+        """Trigger a shock action on all shockers.
+
+        Args:
+            intensity: Intensity level (0-100, default 50).
+            duration: Duration in milliseconds (300-65535, default 1000).
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        return self.send_action_all("Shock", intensity, duration, False, api_key)
+
+    def vibrate_all(
+        self,
+        intensity: int = 50,
+        duration: int = 1000,
+        api_key: Optional[str] = None,
+    ) -> Optional[ActionResponse]:
+        """Trigger a vibrate action on all shockers.
+
+        Args:
+            intensity: Intensity level (0-100, default 50).
+            duration: Duration in milliseconds (300-65535, default 1000).
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        return self.send_action_all("Vibrate", intensity, duration, False, api_key)
+
+    def beep_all(
+        self, duration: int = 300, api_key: Optional[str] = None
+    ) -> Optional[ActionResponse]:
+        """Trigger a beep/sound action on all shockers.
+
+        Args:
+            duration: Duration in milliseconds (300-65535, default 300).
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        return self.send_action_all("Sound", 0, duration, False, api_key)
+
+    def stop_all(
+        self, api_key: Optional[str] = None
+    ) -> Optional[ActionResponse]:
+        """Stop all actions on all shockers.
+
+        Args:
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        return self.send_action_all("Stop", 0, 300, False, api_key)

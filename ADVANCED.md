@@ -119,6 +119,46 @@ This section lists all public definitions in the library and how to use them.
       client.stop("shocker-uuid")
       ```
 
+  - `send_action_all(control_type: str, intensity: int = 0, duration: int = 1000, exclusive: bool = False, api_key: Optional[str] = None) -> Any`
+    - Send an action command to all shockers. Automatically fetches all shockers and sends the command to each one.
+    - Example:
+
+      ```python
+      client.send_action_all("Vibrate", intensity=30, duration=2000)
+      ```
+
+  - `shock_all(intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
+    - Convenience wrapper to shock all shockers at once.
+    - Example:
+
+      ```python
+      client.shock_all(intensity=40, duration=1200)
+      ```
+
+  - `vibrate_all(intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
+    - Convenience wrapper to vibrate all shockers at once.
+    - Example:
+
+      ```python
+      client.vibrate_all(intensity=30, duration=800)
+      ```
+
+  - `beep_all(duration: int = 300, api_key: Optional[str] = None) -> Any`
+    - Convenience wrapper to beep all shockers at once.
+    - Example:
+
+      ```python
+      client.beep_all(duration=500)
+      ```
+
+  - `stop_all(api_key: Optional[str] = None) -> Any`
+    - Convenience wrapper to stop all actions on all shockers.
+    - Example:
+
+      ```python
+      client.stop_all()
+      ```
+
 ### Typical usage pattern
 
 ```python
@@ -130,9 +170,13 @@ client = OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0")
 devices = client.list_devices()
 shockers = client.list_shockers()
 
-# Act
+# Act on a single shocker
 client.vibrate("shocker-uuid", intensity=25, duration=1500)
 client.stop("shocker-uuid")  # Stop all actions
+
+# Act on all shockers at once
+client.vibrate_all(intensity=25, duration=1500)
+client.stop_all()  # Stop all shockers
 ```
 
 ### CLI (optional)
@@ -141,9 +185,9 @@ Run without coding using `python -m OpenShockPY.cli <command>`.
 
 - `devices`: list devices
 - `shockers [--device-id <id>]`: list shockers (optionally filtered)
-- `shock --shocker-id <id> [--intensity 0-100] [--duration ms]`
-- `vibrate --shocker-id <id> [--intensity 0-100] [--duration ms]`
-- `beep --shocker-id <id> [--duration ms]`
+- `shock --shocker-id <id|all> [--intensity 0-100] [--duration ms]`: use "all" to shock all shockers
+- `vibrate --shocker-id <id|all> [--intensity 0-100] [--duration ms]`: use "all" to vibrate all shockers
+- `beep --shocker-id <id|all> [--duration ms]`: use "all" to beep all shockers
 - `login [--api-key <key>]`: store key in system keyring
 - `logout`: remove key from system keyring
 
@@ -153,7 +197,31 @@ Examples:
 python -m OpenShockPY.cli login --api-key YOUR_API_KEY
 python -m OpenShockPY.cli devices
 python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
+python -m OpenShockPY.cli shock --shocker-id all --intensity 40 --duration 1200  # All shockers
 ```
+
+### Async client (optional)
+
+The `AsyncOpenShockClient` mirrors the synchronous `OpenShockClient` API but provides `async` methods. Install optional dependencies to use it:
+
+```bash
+pip install Nanashi-OpenShockPY[async]
+```
+
+Example:
+
+```python
+import asyncio
+from OpenShockPY import AsyncOpenShockClient
+
+async def main():
+  async with AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0") as client:
+    await client.shock_all(intensity=50, duration=1000)
+
+asyncio.run(main())
+```
+
+⚠️ **Experimental / Unsupported**: The `AsyncOpenShockClient` is provided as an optional, experimental API. It is not considered stable or officially supported and may change or be removed in future releases. The async client uses `httpx` and requires the `async` extras; it may not receive the same QA coverage as the synchronous client. Use at your own risk and test thoroughly before using it in production.
 
 ## Client fundamentals
 
@@ -204,9 +272,10 @@ python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
 - Entry point: `python -m OpenShockPY.cli <command>`.
 - Commands: `devices`, `shockers`, `shock`, `vibrate`, `beep`, `login`, `logout`.
 - Authentication precedence: `--api-key` > `OPENSHOCK_API_KEY` env var > key stored in system keyring.
-- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.6` automatically.
+- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.7` automatically.
 - Base URL override: `--base-url https://api.openshock.dev`.
 - Key storage: `python -m OpenShockPY.cli login` writes to your system keyring under the service name `openshock`.
+- "all" option: For `shock`, `vibrate`, and `beep` commands, use `--shocker-id all` to send the command to all shockers at once.
 
 ## Development and testing
 
