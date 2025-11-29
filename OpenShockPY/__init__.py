@@ -12,6 +12,7 @@ from .client import (
     ShockerListResponse,
     ShockerResponse,
 )
+
 try:
     from .async_client import AsyncOpenShockClient
 except Exception:

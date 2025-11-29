@@ -448,15 +448,15 @@ class OpenShockClient:
         # Get all shockers
         shockers_response = self.list_shockers(api_key=api_key)
         devices = shockers_response.get("data", [])
-        
+
         # Extract all shockers from all devices
         all_shockers = []
         for device in devices:
             all_shockers.extend(device.get("shockers", []))
-        
+
         if not all_shockers:
             raise OpenShockError("No shockers found")
-        
+
         duration = max(300, min(65535, duration))
         shocks_list = [
             {
@@ -468,12 +468,12 @@ class OpenShockClient:
             }
             for shocker in all_shockers
         ]
-        
+
         payload = {
             "shocks": shocks_list,
             "customName": None,
         }
-        
+
         resp = self._session.post(
             self._url("/2/shockers/control"),
             json=payload,
@@ -544,9 +544,7 @@ class OpenShockClient:
         """
         return self.send_action_all("Sound", 0, duration, False, api_key)
 
-    def stop_all(
-        self, api_key: Optional[str] = None
-    ) -> Optional[ActionResponse]:
+    def stop_all(self, api_key: Optional[str] = None) -> Optional[ActionResponse]:
         """Stop all actions on all shockers.
 
         Args:

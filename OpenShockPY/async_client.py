@@ -1,12 +1,12 @@
 # This software is licensed under NNCL v1.2-MODIFIED-OpenShockPY see LICENSE.md for more info
 # https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
-import httpx # type: ignore
+import httpx  # type: ignore
 
 from .client import (
-    OpenShockError,
     ControlType,
+    OpenShockError,
 )
 
 
@@ -96,7 +96,9 @@ class AsyncOpenShockClient:
         )
         return await self._handle(resp)
 
-    async def get_device(self, device_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
+    async def get_device(
+        self, device_id: str, api_key: Optional[str] = None
+    ) -> Dict[str, Any]:
         resp = await self._client.get(
             self._url(f"/1/devices/{device_id}"), headers=self._get_headers(api_key)
         )
@@ -107,7 +109,8 @@ class AsyncOpenShockClient:
     ) -> Dict[str, Any]:
         if device_id:
             resp = await self._client.get(
-                self._url(f"/1/devices/{device_id}/shockers"), headers=self._get_headers(api_key)
+                self._url(f"/1/devices/{device_id}/shockers"),
+                headers=self._get_headers(api_key),
             )
         else:
             resp = await self._client.get(
@@ -115,7 +118,9 @@ class AsyncOpenShockClient:
             )
         return await self._handle(resp)
 
-    async def get_shocker(self, shocker_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
+    async def get_shocker(
+        self, shocker_id: str, api_key: Optional[str] = None
+    ) -> Dict[str, Any]:
         resp = await self._client.get(
             self._url(f"/1/shockers/{shocker_id}"), headers=self._get_headers(api_key)
         )
@@ -145,7 +150,9 @@ class AsyncOpenShockClient:
             "customName": None,
         }
         resp = await self._client.post(
-            self._url("/2/shockers/control"), json=payload, headers=self._get_headers(api_key)
+            self._url("/2/shockers/control"),
+            json=payload,
+            headers=self._get_headers(api_key),
         )
         return await self._handle(resp)
 
@@ -156,7 +163,9 @@ class AsyncOpenShockClient:
         duration: int = 1000,
         api_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
-        return await self.send_action(shocker_id, "Shock", intensity, duration, False, api_key)
+        return await self.send_action(
+            shocker_id, "Shock", intensity, duration, False, api_key
+        )
 
     async def vibrate(
         self,
@@ -165,12 +174,18 @@ class AsyncOpenShockClient:
         duration: int = 1000,
         api_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
-        return await self.send_action(shocker_id, "Vibrate", intensity, duration, False, api_key)
+        return await self.send_action(
+            shocker_id, "Vibrate", intensity, duration, False, api_key
+        )
 
-    async def beep(self, shocker_id: str, duration: int = 300, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    async def beep(
+        self, shocker_id: str, duration: int = 300, api_key: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         return await self.send_action(shocker_id, "Sound", 0, duration, False, api_key)
 
-    async def stop(self, shocker_id: str, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    async def stop(
+        self, shocker_id: str, api_key: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         return await self.send_action(shocker_id, "Stop", 0, 300, False, api_key)
 
     async def send_action_all(
@@ -207,17 +222,27 @@ class AsyncOpenShockClient:
 
         payload = {"shocks": shocks_list, "customName": None}
         resp = await self._client.post(
-            self._url("/2/shockers/control"), json=payload, headers=self._get_headers(api_key)
+            self._url("/2/shockers/control"),
+            json=payload,
+            headers=self._get_headers(api_key),
         )
         return await self._handle(resp)
 
-    async def shock_all(self, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    async def shock_all(
+        self, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         return await self.send_action_all("Shock", intensity, duration, False, api_key)
 
-    async def vibrate_all(self, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        return await self.send_action_all("Vibrate", intensity, duration, False, api_key)
+    async def vibrate_all(
+        self, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        return await self.send_action_all(
+            "Vibrate", intensity, duration, False, api_key
+        )
 
-    async def beep_all(self, duration: int = 300, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    async def beep_all(
+        self, duration: int = 300, api_key: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         return await self.send_action_all("Sound", 0, duration, False, api_key)
 
     async def stop_all(self, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:

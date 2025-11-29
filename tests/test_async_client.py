@@ -1,10 +1,9 @@
 import json
 
 import pytest
+
 respx = pytest.importorskip("respx")
 httpx = pytest.importorskip("httpx")
-from httpx import Response  # type: ignore
-
 from OpenShockPY.async_client import AsyncOpenShockClient
 
 
@@ -14,7 +13,11 @@ async def test_list_shockers_success():
     client = AsyncOpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
 
     respx.get("https://api.openshock.app/1/shockers/own").respond(
-        200, json={"data": [{"id": "device-uuid", "shockers": [{"id": "s1"}]}], "message": ""}
+        200,
+        json={
+            "data": [{"id": "device-uuid", "shockers": [{"id": "s1"}]}],
+            "message": "",
+        },
     )
 
     data = await client.list_shockers()
@@ -33,17 +36,17 @@ async def test_shock_all_success():
     respx.get("https://api.openshock.app/1/shockers/own").respond(
         200,
         json={
-            "data": [
-                {"id": "device-uuid", "shockers": [{"id": "s1"}, {"id": "s2"}]}
-            ],
+            "data": [{"id": "device-uuid", "shockers": [{"id": "s1"}, {"id": "s2"}]}],
             "message": "",
         },
     )
 
-    post_route = respx.post("https://api.openshock.app/2/shockers/control").respond(200, json={"ok": True})
+    post_route = respx.post("https://api.openshock.app/2/shockers/control").respond(
+        200, json={"ok": True}
+    )
 
     data = await client.shock_all(intensity=40, duration=1200)
-    assert data.get("ok") is True # type: ignore
+    assert data.get("ok") is True  # type: ignore
 
     # assert last call payload was the array with both s1, s2
     assert post_route.calls

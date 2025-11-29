@@ -36,7 +36,16 @@ def main() -> int:
     )
     parser.add_argument(
         "command",
-        choices=["devices", "shockers", "shock", "vibrate", "beep", "stop", "login", "logout"],
+        choices=[
+            "devices",
+            "shockers",
+            "shock",
+            "vibrate",
+            "beep",
+            "stop",
+            "login",
+            "logout",
+        ],
         help="Command to run",
     )
     parser.add_argument("--api-key", dest="api_key", help="OpenShock API key")
