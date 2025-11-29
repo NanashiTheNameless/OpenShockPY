@@ -1,0 +1,58 @@
+[project]
+name = "Nanashi-OpenShockPY"
+version = "0.0.0.1"
+description = "UNOFFICIAL Lightweight Python client for the OpenShock API"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "NNCL V1.2-MODIFIED-OpenShockPY" }
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+
+authors = [
+    { name = "NanashiTheNameless" },
+    { name = "NanashiTheNameless", email = "NanashiTheNameless@NamelessNanashi.dev" }
+]
+
+maintainers = [
+    { name = "NanashiTheNameless" },
+    { name = "NanashiTheNameless", email = "NanashiTheNameless@NamelessNanashi.dev" }
+]
+
+dependencies = [
+    "requests>=2.32.0"
+]
+
+[project.optional-dependencies]
+cli = [
+    "keyring>=24.0.0"
+]
+
+dev = [
+    "pytest>=7.0.0"
+]
+
+all = [
+    "keyring>=24.0.0",
+    "pytest>=7.0.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/NanashiTheNameless/OpenShockPY"
+Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
+"GitHub Sponsor" = "https://github.com/sponsors/NanashiTheNameless"
+"Buy Me a Coffee" = "https://buymeacoffee.com/NamelessNanashi"
