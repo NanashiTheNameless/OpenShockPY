@@ -1,4 +1,4 @@
-"shocker-uuid"# OpenShock Python — Advanced Guide
+# OpenShock Python — Advanced Guide
 
 Technical details for engineers and power users. For a simpler overview, see [README.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/README.md>).
 
