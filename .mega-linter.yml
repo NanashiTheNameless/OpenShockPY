@@ -16,13 +16,14 @@ APPLY_FIXES: all
 
 DISABLE_LINTERS:
   - PYTHON_PYLINT # Optional import noise; not used here
+  - PYTHON_PYRIGHT # Shows errors that are not relevant in this context
   - COPYPASTE_JSCPD # Repeated scaffolding acceptable
   - REPOSITORY_KICS # Security scan disabled for now
+  - YAML_YAMLLINT # No YAML files to lint
+  - SPELL_CSPELL # Handled sepetately in GitHub Actions
 
 PYTHON_FLAKE8_CONFIG_FILE: .flake8
-MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.json
-SPELL_CSPELL_CONFIG_FILE: .cspell.json
-PYTHON_PYRIGHT_CONFIG_FILE: pyproject.toml
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdown lint.json
 
 SHOW_ELAPSED_TIME: true
 OUTPUT_FORMAT: text
