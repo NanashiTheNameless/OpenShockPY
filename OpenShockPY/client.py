@@ -22,9 +22,7 @@ class OpenShockClient:
 
         self._session.headers.setdefault("Content-Type", "application/json")
         self._session.headers.setdefault("Accept", "application/json")
-        # Attribute annotations for mypy
-        self.user_agent: Optional[str] = None
-        self.api_key: Optional[str] = None
+
         if user_agent is not None:
             self.SetUA(user_agent)
         self.SetAPIKey(api_key)
