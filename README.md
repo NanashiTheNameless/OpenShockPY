@@ -48,7 +48,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 Install with CLI support:
 
 ```bash
-pip install Nanashi-OpenShockPY[cli]
+pip install "Nanashi-OpenShockPY[cli]"
 ```
 
 Store your API key securely, then list devices:
@@ -69,7 +69,7 @@ The CLI automatically sets an appropriate User-Agent.
 ## Installation options
 
 - Library only (most people): `pip install Nanashi-OpenShockPY`
-- Library + CLI extras (adds keyring): `pip install Nanashi-OpenShockPY[cli]`
+- Library + CLI extras (adds keyring): `pip install "Nanashi-OpenShockPY[cli]"`
 - Development/editable install from this repo: `pip install -e .` (or `pip install -e ".[cli]"` for CLI)
 
 ## Responsible use and licensing
