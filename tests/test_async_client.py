@@ -1,7 +1,6 @@
 import json
 
 import pytest
-
 from OpenShockPY.async_client import AsyncOpenShockClient
 
 respx = pytest.importorskip("respx")
