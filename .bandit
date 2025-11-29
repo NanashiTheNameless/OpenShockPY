@@ -1,0 +1,4 @@
+# Bandit configuration file
+# Exclude tests directory since pytest uses assert statements
+exclude_dirs:
+  - tests
