@@ -8,7 +8,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 - Optional CLI for quick checks without writing code.
 - Keeps your API key in memory only; the CLI can store it securely via your system keyring.
 
-### License TL;DR (see full LICENSE.md for full terms)
+### License TL;DR (see full [LICENSE.md](LICENSE.md) for complete terms)
 
 - Free for non-commercial, ethical use; you may study, modify, and share it.
 - You can include it in other open-source projects as a separate library component.
