@@ -21,6 +21,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Typing :: Typed",
 ]
 
 authors = [
@@ -56,3 +57,10 @@ Homepage = "https://github.com/NanashiTheNameless/OpenShockPY"
 Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
 "GitHub Sponsor" = "https://github.com/sponsors/NanashiTheNameless"
 "Buy Me a Coffee" = "https://buymeacoffee.com/NamelessNanashi"
+
+[tool.setuptools.package-data]
+OpenShockPY = ["py.typed"]
+
+[tool.bandit]
+skips = ["B101"]  # B101: assert statements are acceptable in tests (pytest)
+exclude_dirs = ["tests"]
