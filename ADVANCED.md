@@ -1,4 +1,4 @@
-# OpenShock Python — Advanced Guide
+"shocker-uuid"# OpenShock Python — Advanced Guide
 
 Technical details for engineers and power users. For a simpler overview, see [README.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/README.md>).
 
@@ -123,7 +123,7 @@ devices = client.list_devices()
 shockers = client.list_shockers()
 
 # Act
-client.vibrate("<shocker-id>", intensity=25, duration=1500)
+client.vibrate("shocker-uuid", intensity=25, duration=1500)
 ```
 
 ### CLI (optional)
