@@ -1,6 +1,6 @@
 import json
-import pytest
 
+import pytest
 from OpenShockPY.client import OpenShockClient, OpenShockError
 
 
