@@ -81,4 +81,4 @@ The CLI automatically sets an appropriate User-Agent.
 
 ## Need more detail?
 
-Advanced options, API notes, and developer tips are available in [ADVANCED.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/ADVANCED.md>.
+Advanced options, API notes, and developer tips are available in [ADVANCED.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/ADVANCED.md>).
