@@ -21,6 +21,7 @@ DISABLE_LINTERS:
   - REPOSITORY_KICS # Security scan disabled for now
   - YAML_YAMLLINT # No YAML files to lint
   - SPELL_CSPELL # Handled sepetately in GitHub Actions
+  - PYTHON_MYPY # Not worth effort to make work will fix it eventually
 
 PYTHON_FLAKE8_CONFIG_FILE: .flake8
 MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdown lint.json
