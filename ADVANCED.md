@@ -25,7 +25,7 @@ This section lists all public definitions in the library and how to use them.
     - Example:
 
       ```python
-      client.SetUA("YourAppName/1.0")
+      client.SetUA("YourApp/1.0")
       ```
 
   - `SetBaseURL(base_url: str) -> None`
