@@ -12,8 +12,16 @@ class OpenShockError(Exception):
 
 
 # Type definitions for API responses
+# Note: TypedDict classes use total=False to allow for API evolution and
+# partial responses. This provides flexibility when the API returns varying
+# fields across different endpoints or versions.
+
+
 class Shocker(TypedDict, total=False):
-    """Represents a shocker device."""
+    """Represents a shocker device.
+
+    Fields may be omitted depending on the API endpoint used.
+    """
 
     id: str
     name: str
@@ -25,7 +33,10 @@ class Shocker(TypedDict, total=False):
 
 
 class Device(TypedDict, total=False):
-    """Represents an OpenShock hub device."""
+    """Represents an OpenShock hub device.
+
+    Fields may be omitted depending on the API endpoint used.
+    """
 
     id: str
     name: str
@@ -36,35 +47,50 @@ class Device(TypedDict, total=False):
 
 
 class DeviceListResponse(TypedDict, total=False):
-    """Response from listing devices."""
+    """Response from listing devices.
+
+    Typically contains 'message' and 'data' fields.
+    """
 
     message: str
     data: List[Device]
 
 
 class DeviceResponse(TypedDict, total=False):
-    """Response from getting a single device."""
+    """Response from getting a single device.
+
+    Typically contains 'message' and 'data' fields.
+    """
 
     message: str
     data: Device
 
 
 class ShockerListResponse(TypedDict, total=False):
-    """Response from listing shockers."""
+    """Response from listing shockers.
+
+    Typically contains 'message' and 'data' fields.
+    """
 
     message: str
     data: List[Shocker]
 
 
 class ShockerResponse(TypedDict, total=False):
-    """Response from getting a single shocker."""
+    """Response from getting a single shocker.
+
+    Typically contains 'message' and 'data' fields.
+    """
 
     message: str
     data: Shocker
 
 
 class ActionResponse(TypedDict, total=False):
-    """Response from sending an action (shock/vibrate/beep)."""
+    """Response from sending an action (shock/vibrate/beep).
+
+    May contain a 'message' field with status information.
+    """
 
     message: str
 
@@ -279,7 +305,11 @@ class OpenShockClient:
             api_key: Optional API key to use instead of the stored one.
 
         Returns:
-            Response from the action, or None if no content.
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
         """
         duration = max(300, min(65535, duration))
         payload = {
@@ -318,7 +348,11 @@ class OpenShockClient:
             api_key: Optional API key to use instead of the stored one.
 
         Returns:
-            Response from the action, or None if no content.
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
         """
         return self.send_action(
             shocker_id, "Shock", intensity, duration, False, api_key
@@ -340,7 +374,11 @@ class OpenShockClient:
             api_key: Optional API key to use instead of the stored one.
 
         Returns:
-            Response from the action, or None if no content.
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
         """
         return self.send_action(
             shocker_id, "Vibrate", intensity, duration, False, api_key
@@ -357,6 +395,10 @@ class OpenShockClient:
             api_key: Optional API key to use instead of the stored one.
 
         Returns:
-            Response from the action, or None if no content.
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
         """
         return self.send_action(shocker_id, "Sound", 0, duration, False, api_key)
