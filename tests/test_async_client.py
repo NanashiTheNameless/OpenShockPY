@@ -1,8 +1,9 @@
 import json
 
 import pytest
-import respx # type: ignore
-from httpx import Response # type: ignore
+respx = pytest.importorskip("respx")
+httpx = pytest.importorskip("httpx")
+from httpx import Response  # type: ignore
 
 from OpenShockPY.async_client import AsyncOpenShockClient
 
