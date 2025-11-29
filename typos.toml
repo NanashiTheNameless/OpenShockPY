@@ -1,0 +1,46 @@
+# Typos configuration for OpenShockPY
+
+[files]
+# Exclude common generated or vendor directories/files
+extend-exclude = [
+  ".git/",
+  "__pycache__/",
+  ".github/",
+  ".venv/",
+  "venv/",
+  "node_modules/",
+  "dist/",
+  "build/",
+  "*.png",
+  "*.jpg",
+  "*.jpeg",
+  "*.svg",
+  "*.gif",
+]
+
+[default]
+# Treat all files as UTF-8
+binary = false
+# Use English dictionary primarily
+locale = "en"
+
+[default.extend-words]
+# Project-specific proper nouns and terms to allow
+OpenShock = "OpenShock"
+OpenShockPY = "OpenShockPY"
+Nanashi = "Nanashi"
+GitHub = "GitHub"
+PyPI = "PyPI"
+CLI = "CLI"
+API = "API"
+Webhook = "Webhook"
+WebSocket = "WebSocket"
+pytest = "pytest"
+TypeError = "TypeError"
+
+[default.extend-identifiers]
+# Identifiers or tokens that should not be corrected
+openShock = "openShock"
+openshock = "openshock"
+OpenShockClient = "OpenShockClient"
+
