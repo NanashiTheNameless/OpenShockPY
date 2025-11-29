@@ -2,9 +2,10 @@ import json
 
 import pytest
 
+from OpenShockPY.async_client import AsyncOpenShockClient
+
 respx = pytest.importorskip("respx")
 httpx = pytest.importorskip("httpx")
-from OpenShockPY.async_client import AsyncOpenShockClient
 
 
 @pytest.mark.asyncio
