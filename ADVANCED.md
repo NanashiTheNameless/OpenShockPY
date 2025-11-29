@@ -1,6 +1,6 @@
 # OpenShock Python — Advanced Guide
 
-Technical details for engineers and power users. For a simpler overview, see `README.md`.
+Technical details for engineers and power users. For a simpler overview, see [README.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/README.md>).
 
 ## Definitions and Usage
 
@@ -23,7 +23,7 @@ This section lists all public definitions in the library and how to use them.
   - `SetUA(user_agent: str) -> None`
     - Set/update the `User-Agent` header. Required before any API call.
     - Example:
-      
+
       ```python
       client.SetUA("YourAppName/1.0")
       ```
@@ -31,7 +31,7 @@ This section lists all public definitions in the library and how to use them.
   - `SetBaseURL(base_url: str) -> None`
     - Change the API base URL (trailing slashes trimmed).
     - Example:
-      
+
       ```python
       client.SetBaseURL("https://api.openshock.dev")
       ```
@@ -39,16 +39,16 @@ This section lists all public definitions in the library and how to use them.
   - `SetAPIKey(api_key: Optional[str]) -> None`
     - Set or clear the API key used for authenticated requests.
     - Example:
-      
+
       ```python
-      client.SetAPIKey("OSK_...your key...")
+      client.SetAPIKey("YOUR_API_KEY")
       ```
 
   - `list_devices(api_key: Optional[str] = None) -> Any`
     - List all devices for the authenticated account.
     - Optional per-call `api_key` overrides the client’s stored key.
     - Example:
-      
+
       ```python
       devices = client.list_devices()
       ```
@@ -56,7 +56,7 @@ This section lists all public definitions in the library and how to use them.
   - `get_device(device_id: str, api_key: Optional[str] = None) -> Any`
     - Get details for a single device by ID.
     - Example:
-      
+
       ```python
       device = client.get_device("device-uuid")
       ```
@@ -64,7 +64,7 @@ This section lists all public definitions in the library and how to use them.
   - `list_shockers(device_id: Optional[str] = None, api_key: Optional[str] = None) -> Any`
     - List shockers you own, or only those attached to a given device if `device_id` is provided.
     - Example:
-      
+
       ```python
       shockers = client.list_shockers()              # all owned
       shockers = client.list_shockers(device_id="d1")  # for one device
@@ -73,7 +73,7 @@ This section lists all public definitions in the library and how to use them.
   - `get_shocker(shocker_id: str, api_key: Optional[str] = None) -> Any`
     - Get details for a single shocker by ID.
     - Example:
-      
+
       ```python
       shocker = client.get_shocker("shocker-uuid")
       ```
@@ -82,7 +82,7 @@ This section lists all public definitions in the library and how to use them.
     - Low-level method to send a control command. `control_type` is one of `"Shock"`, `"Vibrate"`, `"Sound"`, `"Stop"`.
     - `duration` is clamped to 300–65535 ms. Intensity is passed through; the API expects 0–100 (use 0 for `Sound`).
     - Example (send Stop):
-      
+
       ```python
       client.send_action("shocker-uuid", "Stop")
       ```
@@ -90,7 +90,7 @@ This section lists all public definitions in the library and how to use them.
   - `shock(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Shock")`.
     - Example:
-      
+
       ```python
       client.shock("shocker-uuid", intensity=40, duration=1200)
       ```
@@ -98,7 +98,7 @@ This section lists all public definitions in the library and how to use them.
   - `vibrate(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Vibrate")`.
     - Example:
-      
+
       ```python
       client.vibrate("shocker-uuid", intensity=30, duration=800)
       ```
@@ -106,7 +106,7 @@ This section lists all public definitions in the library and how to use them.
   - `beep(shocker_id: str, duration: int = 300, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Sound", intensity=0)`.
     - Example:
-      
+
       ```python
       client.beep("shocker-uuid", duration=500)
       ```
@@ -116,7 +116,7 @@ This section lists all public definitions in the library and how to use them.
 ```python
 from OpenShockPY import OpenShockClient, OpenShockError
 
-client = OpenShockClient(api_key="OSK_...", user_agent="YourApp/1.0")
+client = OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0")
 
 # Enumerate
 devices = client.list_devices()
@@ -141,7 +141,7 @@ Run without coding using `python -m OpenShockPY.cli <command>`.
 Examples:
 
 ```bash
-python -m OpenShockPY.cli login --api-key OSK_...
+python -m OpenShockPY.cli login --api-key YOUR_API_KEY
 python -m OpenShockPY.cli devices
 python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
 ```
@@ -195,7 +195,7 @@ python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
 - Entry point: `python -m OpenShockPY.cli <command>`.
 - Commands: `devices`, `shockers`, `shock`, `vibrate`, `beep`, `login`, `logout`.
 - Authentication precedence: `--api-key` > `OPENSHOCK_API_KEY` env var > key stored in system keyring.
-- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.2` automatically.
+- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.4` automatically.
 - Base URL override: `--base-url https://api.openshock.dev`.
 - Key storage: `python -m OpenShockPY.cli login` writes to your system keyring under the service name `openshock`.
 
@@ -209,4 +209,4 @@ python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
 
 ## License reminder
 
-The project is licensed under **NNCL v1.2-MODIFIED-OpenShockPY**. It allows non-commercial, ethical use, requires source availability for adaptations, and forbids commercial exploitation without a separate license. See `LICENSE.md` for the full terms.
+The project is licensed under **NNCL v1.2-MODIFIED-OpenShockPY**. It allows non-commercial, ethical use, requires source availability for adaptations, and forbids commercial exploitation without a separate license. See [LICENSE.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md>) for the full terms.

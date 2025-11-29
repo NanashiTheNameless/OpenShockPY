@@ -8,7 +8,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 - Optional CLI for quick checks without writing code.
 - Keeps your API key in memory only; the CLI can store it securely via your system keyring.
 
-### License TL;DR (see full [LICENSE.md](LICENSE.md) for complete terms)
+### License TL;DR (see full [LICENSE.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md>) for complete terms)
 
 - Free for non-commercial, ethical use; you may study, modify, and share it.
 - You can include it in other open-source projects as a separate library component.
@@ -70,14 +70,15 @@ The CLI automatically sets an appropriate User-Agent.
 
 - Library only (most people): `pip install Nanashi-OpenShockPY`
 - Library + CLI extras (adds keyring): `pip install "Nanashi-OpenShockPY[cli]"`
+- Library + CLI extras + Potential future deps: `pip install "Nanashi-OpenShockPY[all]"`
 - Development/editable install from this repo: `pip install -e .` (or `pip install -e ".[cli]"` for CLI)
 
 ## Responsible use and licensing
 
 - This project is for non-commercial, ethical use only. Commercial use requires a separate license.
 - Respect local laws and the rights and safety of others when issuing control commands.
-- Full terms: [LICENSE.md](LICENSE.md).
+- Full terms: [LICENSE.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md>).
 
 ## Need more detail?
 
-Advanced options, API notes, and developer tips are available in [ADVANCED.md](ADVANCED.md).
+Advanced options, API notes, and developer tips are available in [ADVANCED.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/ADVANCED.md>.
