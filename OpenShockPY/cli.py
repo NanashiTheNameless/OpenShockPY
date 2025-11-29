@@ -32,7 +32,7 @@ def set_stored_api_key(api_key: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="python -m OpenShockPY.cli",
-        description="OpenShock Python CLI (run with: python -m OpenShockPY.cli <command>)"
+        description="OpenShock Python CLI (run with: python -m OpenShockPY.cli <command>)",
     )
     parser.add_argument(
         "command",

@@ -191,7 +191,9 @@ class OpenShockClient:
 
     def _ensure_user_agent(self) -> None:
         if not self.user_agent:
-            raise OpenShockError("User-Agent must be set via SetUA before using the client")
+            raise OpenShockError(
+                "User-Agent must be set via SetUA before using the client"
+            )
 
     def SetAPIKey(self, api_key: Optional[str]) -> None:
         """Store the API key in memory and refresh the session headers."""
@@ -202,9 +204,7 @@ class OpenShockClient:
             self._session.headers.pop("Open-Shock-Token", None)
 
     # Devices
-    def list_devices(
-        self, api_key: Optional[str] = None
-    ) -> DeviceListResponse:
+    def list_devices(self, api_key: Optional[str] = None) -> DeviceListResponse:
         """List every device tied to the current account.
 
         Args:
