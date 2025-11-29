@@ -111,6 +111,14 @@ This section lists all public definitions in the library and how to use them.
       client.beep("shocker-uuid", duration=500)
       ```
 
+  - `stop(shocker_id: str, api_key: Optional[str] = None) -> Any`
+    - Convenience wrapper for `send_action(..., control_type="Stop")`. Stops all actions on the shocker.
+    - Example:
+
+      ```python
+      client.stop("shocker-uuid")
+      ```
+
 ### Typical usage pattern
 
 ```python
@@ -124,6 +132,7 @@ shockers = client.list_shockers()
 
 # Act
 client.vibrate("shocker-uuid", intensity=25, duration=1500)
+client.stop("shocker-uuid")  # Stop all actions
 ```
 
 ### CLI (optional)
@@ -195,7 +204,7 @@ python -m OpenShockPY.cli shock --shocker-id <id> --intensity 40 --duration 1200
 - Entry point: `python -m OpenShockPY.cli <command>`.
 - Commands: `devices`, `shockers`, `shock`, `vibrate`, `beep`, `login`, `logout`.
 - Authentication precedence: `--api-key` > `OPENSHOCK_API_KEY` env var > key stored in system keyring.
-- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.5` automatically.
+- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.6` automatically.
 - Base URL override: `--base-url https://api.openshock.dev`.
 - Key storage: `python -m OpenShockPY.cli login` writes to your system keyring under the service name `openshock`.
 

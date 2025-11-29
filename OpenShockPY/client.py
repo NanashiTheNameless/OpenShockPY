@@ -402,3 +402,21 @@ class OpenShockClient:
             OpenShockError: If the API returns an error status code.
         """
         return self.send_action(shocker_id, "Sound", 0, duration, False, api_key)
+
+    def stop(
+        self, shocker_id: str, api_key: Optional[str] = None
+    ) -> Optional[ActionResponse]:
+        """Stop all actions on the shocker.
+
+        Args:
+            shocker_id: The unique identifier of the shocker.
+            api_key: Optional API key to use instead of the stored one.
+
+        Returns:
+            ActionResponse if the API returns JSON content, None if the
+            response has no content (HTTP 204 No Content).
+
+        Raises:
+            OpenShockError: If the API returns an error status code.
+        """
+        return self.send_action(shocker_id, "Stop", 0, 300, False, api_key)

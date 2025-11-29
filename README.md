@@ -41,6 +41,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
    ```python
    print(client.list_devices())
    client.shock("YOUR_SHOCKER_ID", intensity=50, duration=1000)
+   client.stop("YOUR_SHOCKER_ID")  # Stop all actions
    ```
 
 ## Optional CLI (no coding needed)
