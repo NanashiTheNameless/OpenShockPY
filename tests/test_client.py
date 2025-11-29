@@ -1,6 +1,4 @@
 import json
-import types
-import builtins
 import pytest
 
 from OpenShockPY.client import OpenShockClient, OpenShockError

@@ -35,7 +35,10 @@
     "UDHR",
     "ECHR",
     "carceral",
-    "paywalled"
+    "paywalled",
+    "pypa",
+    "pypi",
+    "pyproject"
   ],
   "version": "0.2"
 }

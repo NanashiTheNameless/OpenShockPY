@@ -51,7 +51,7 @@ Technical details for engineers and power users. For a simpler overview, see `RE
 - Entry point: `python -m OpenShockPY.cli <command>`.
 - Commands: `devices`, `shockers`, `shock`, `vibrate`, `beep`, `login`, `logout`.
 - Authentication precedence: `--api-key` > `OPENSHOCK_API_KEY` env var > key stored in system keyring.
-- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.1` automatically.
+- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.0.2` automatically.
 - Base URL override: `--base-url https://api.openshock.dev`.
 - Key storage: `python -m OpenShockPY.cli login` writes to your system keyring under the service name `openshock`.
 

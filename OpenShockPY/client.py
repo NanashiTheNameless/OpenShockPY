@@ -22,8 +22,9 @@ class OpenShockClient:
 
         self._session.headers.setdefault("Content-Type", "application/json")
         self._session.headers.setdefault("Accept", "application/json")
-
-        self.user_agent = None
+        # Attribute annotations for mypy
+        self.user_agent: Optional[str] = None
+        self.api_key: Optional[str] = None
         if user_agent is not None:
             self.SetUA(user_agent)
         self.SetAPIKey(api_key)
@@ -57,7 +58,7 @@ class OpenShockClient:
         if not user_agent:
             raise ValueError("user_agent must be provided to SetUA")
         self.user_agent = user_agent
-        self._session.headers["User-Agent"] = self.user_agent
+        self._session.headers["User-Agent"] = user_agent
 
     def SetBaseURL(self, base_url: str) -> None:
         """Update the base API URL without trailing slashes."""
