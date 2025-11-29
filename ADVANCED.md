@@ -25,7 +25,7 @@ This section lists all public definitions in the library and how to use them.
     - Example:
 
       ```python
-      client.SetUA("YourAppName/1.0")
+      client.SetUA("YourApp/1.0")
       ```
 
   - `SetBaseURL(base_url: str) -> None`
@@ -123,7 +123,7 @@ devices = client.list_devices()
 shockers = client.list_shockers()
 
 # Act
-client.vibrate("<shocker-id>", intensity=25, duration=1500)
+client.vibrate("shocker-uuid", intensity=25, duration=1500)
 ```
 
 ### CLI (optional)
