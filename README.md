@@ -91,7 +91,7 @@ import asyncio
 from OpenShockPY import AsyncOpenShockClient
 
 async def main():
-    async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="v") as client:
+    async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="YourAppName/YourAppVersion") as client:
         devices = await client.list_devices()
         await client.shock_all(intensity=50, duration=1000)
 
