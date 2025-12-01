@@ -1,6 +1,5 @@
 # This software is licensed under NNCL v1.2-MODIFIED-OpenShockPY see LICENSE.md for more info
 # https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md
-import atexit
 from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 import requests
