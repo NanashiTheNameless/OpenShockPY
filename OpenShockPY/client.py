@@ -1,5 +1,6 @@
 # This software is licensed under NNCL v1.2-MODIFIED-OpenShockPY see LICENSE.md for more info
 # https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md
+import atexit
 from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 import requests
@@ -213,6 +214,24 @@ class OpenShockClient:
             self._session.headers["Open-Shock-Token"] = api_key
         else:
             self._session.headers.pop("Open-Shock-Token", None)
+
+    def close(self) -> None:
+        """Close the underlying HTTP session."""
+        if self._session is not None:
+            self._session.close()
+            self._session = None  # type: ignore[assignment]
+
+    def __del__(self) -> None:
+        """Destructor to ensure session cleanup."""
+        self.close()
+
+    def __enter__(self) -> "OpenShockClient":
+        """Enter context manager."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit context manager and close the session."""
+        self.close()
 
     # Devices
     def list_devices(self, api_key: Optional[str] = None) -> DeviceListResponse:

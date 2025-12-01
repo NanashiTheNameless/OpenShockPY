@@ -106,46 +106,46 @@ def main() -> int:
                     "No API key found. Use 'python -m OpenShockPY.cli login' or set OPENSHOCK_API_KEY environment variable"
                 )
 
-        client = OpenShockClient(
+        with OpenShockClient(
             api_key=api_key,
             base_url=args.base_url,
-            user_agent="OpenShockPY-CLI/0.0.1.1",
-        )
-        data = None
-        if args.command == "devices":
-            data = client.list_devices()
-        elif args.command == "shockers":
-            data = client.list_shockers(args.device_id)
-        elif args.command == "shock":
-            if not args.shocker_id:
-                raise OpenShockPYError("--shocker-id is required for shock")
-            if args.shocker_id.lower() == "all":
-                data = client.shock_all(args.intensity, args.duration)
-            else:
-                data = client.shock(args.shocker_id, args.intensity, args.duration)
-        elif args.command == "vibrate":
-            if not args.shocker_id:
-                raise OpenShockPYError("--shocker-id is required for vibrate")
-            if args.shocker_id.lower() == "all":
-                data = client.vibrate_all(args.intensity, args.duration)
-            else:
-                data = client.vibrate(args.shocker_id, args.intensity, args.duration)
-        elif args.command == "beep":
-            if not args.shocker_id:
-                raise OpenShockPYError("--shocker-id is required for beep")
-            if args.shocker_id.lower() == "all":
-                data = client.beep_all(args.duration)
-            else:
-                data = client.beep(args.shocker_id, args.duration)
-        elif args.command == "stop":
-            if not args.shocker_id:
-                raise OpenShockPYError("--shocker-id is required for stop")
-            if args.shocker_id.lower() == "all":
-                data = client.stop_all()
-            else:
-                data = client.stop(args.shocker_id)
-        if data is not None:
-            print(json.dumps(data, indent=2))
+            user_agent="OpenShockPY-CLI/0.0.1.2",
+        ) as client:
+            data = None
+            if args.command == "devices":
+                data = client.list_devices()
+            elif args.command == "shockers":
+                data = client.list_shockers(args.device_id)
+            elif args.command == "shock":
+                if not args.shocker_id:
+                    raise OpenShockPYError("--shocker-id is required for shock")
+                if args.shocker_id.lower() == "all":
+                    data = client.shock_all(args.intensity, args.duration)
+                else:
+                    data = client.shock(args.shocker_id, args.intensity, args.duration)
+            elif args.command == "vibrate":
+                if not args.shocker_id:
+                    raise OpenShockPYError("--shocker-id is required for vibrate")
+                if args.shocker_id.lower() == "all":
+                    data = client.vibrate_all(args.intensity, args.duration)
+                else:
+                    data = client.vibrate(args.shocker_id, args.intensity, args.duration)
+            elif args.command == "beep":
+                if not args.shocker_id:
+                    raise OpenShockPYError("--shocker-id is required for beep")
+                if args.shocker_id.lower() == "all":
+                    data = client.beep_all(args.duration)
+                else:
+                    data = client.beep(args.shocker_id, args.duration)
+            elif args.command == "stop":
+                if not args.shocker_id:
+                    raise OpenShockPYError("--shocker-id is required for stop")
+                if args.shocker_id.lower() == "all":
+                    data = client.stop_all()
+                else:
+                    data = client.stop(args.shocker_id)
+            if data is not None:
+                print(json.dumps(data, indent=2))
         return 0
     except OpenShockPYError as e:
         print(f"Error: {e}", file=sys.stderr)

@@ -46,6 +46,16 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
    client.shock_all(intensity=50, duration=1000)
    ```
 
+5. (Optional) Use as a context manager for automatic cleanup:
+
+   ```python
+   with OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourAppName/YourAppVersion") as client:
+       client.list_devices()
+   # Session is automatically closed when the block exits
+   ```
+
+   > Note: The client also cleans up automatically when garbage collected, so the context manager is optional.
+
 ## Optional CLI (no coding needed)
 
 Install with CLI support:

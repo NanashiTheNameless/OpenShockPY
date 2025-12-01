@@ -160,6 +160,25 @@ This section lists all public definitions in the library and how to use them.
       client.stop_all()
       ```
 
+  - `close() -> None`
+    - Explicitly close the underlying HTTP session. Safe to call multiple times.
+    - The session is also closed automatically when the client is garbage collected.
+    - Example:
+
+      ```python
+      client.close()
+      ```
+
+  - Context manager support (`with` statement)
+    - The client can be used as a context manager for automatic session cleanup.
+    - Example:
+
+      ```python
+      with OpenShockClient(api_key="KEY", user_agent="App/1.0") as client:
+          client.list_devices()
+      # Session is automatically closed here
+      ```
+
 ### Typical usage pattern
 
 ```python
@@ -353,7 +372,7 @@ asyncio.run(main())
 - Entry point: `python -m OpenShockPY.cli <command>`.
 - Commands: `devices`, `shockers`, `shock`, `vibrate`, `beep`, `login`, `logout`.
 - Authentication precedence: `--api-key` > `OPENSHOCK_API_KEY` env var > key stored in system keyring.
-- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.1.1` automatically.
+- The CLI sets `User-Agent` to `OpenShockPY-CLI/0.0.1.2` automatically.
 - Base URL override: `--base-url https://api.openshock.dev`.
 - Key storage: `python -m OpenShockPY.cli login` writes to your system keyring under the service name `openshock`.
 - "all" option: For `shock`, `vibrate`, and `beep` commands, use `--shocker-id all` to send the command to all shockers at once.
