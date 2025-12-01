@@ -45,12 +45,13 @@ class AsyncOpenShockClient:
         self.base_url = base_url.rstrip(" /")
         self.timeout = timeout
         self.api_key = api_key
+        self.user_agent: Optional[str] = None
         self._client = httpx.AsyncClient(timeout=timeout)
 
         self._client.headers.setdefault("Content-Type", "application/json")
         self._client.headers.setdefault("Accept", "application/json")
         if user_agent is not None:
-            self._client.headers["User-Agent"] = user_agent
+            self.SetUA(user_agent)
         if api_key:
             self._client.headers["Open-Shock-Token"] = api_key
 
@@ -60,10 +61,7 @@ class AsyncOpenShockClient:
     async def _handle(self, resp: httpx.Response) -> Any:
         if 200 <= resp.status_code < 300:
             if resp.content:
-                try:
-                    return resp.json()
-                except Exception:
-                    return None
+                return resp.json()
             return None
         try:
             payload = resp.json()
@@ -72,6 +70,7 @@ class AsyncOpenShockClient:
         raise OpenShockError(f"HTTP {resp.status_code}: {payload}")
 
     def _get_headers(self, api_key: Optional[str] = None) -> Dict[str, Any]:
+        self._ensure_user_agent()
         headers = dict(self._client.headers)
         key = api_key if api_key is not None else self.api_key
         if key:
@@ -79,6 +78,19 @@ class AsyncOpenShockClient:
         else:
             headers.pop("Open-Shock-Token", None)
         return headers
+
+    def _ensure_user_agent(self) -> None:
+        if not self.user_agent:
+            raise OpenShockError(
+                "User-Agent must be set via SetUA before using the client"
+            )
+
+    def SetUA(self, user_agent: str) -> None:
+        """Update the User-Agent header (must be provided before requests)."""
+        if not user_agent:
+            raise ValueError("user_agent must be provided to SetUA")
+        self.user_agent = user_agent
+        self._client.headers["User-Agent"] = user_agent
 
     async def aclose(self) -> None:
         await self._client.aclose()
@@ -136,6 +148,8 @@ class AsyncOpenShockClient:
         exclusive: bool = False,
         api_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
+        if intensity < 0 or intensity > 100:
+            raise OpenShockError("intensity must be between 0 and 100")
         duration = max(300, min(65535, duration))
         payload = {
             "shocks": [
@@ -200,10 +214,18 @@ class AsyncOpenShockClient:
         shockers_response = await self.list_shockers(api_key=api_key)
         devices = shockers_response.get("data", [])
 
-        # Extract all shockers from all devices
+        # Extract all shockers from both flat and nested responses
         all_shockers: List[Dict[str, Any]] = []
-        for device in devices:
-            all_shockers.extend(device.get("shockers", []))
+        if isinstance(devices, list):
+            for entry in devices:
+                if isinstance(entry, dict) and "shockers" in entry:
+                    all_shockers.extend(entry.get("shockers", []))
+                else:
+                    all_shockers.append(entry)
+
+        shockers = shockers_response.get("shockers", [])
+        if isinstance(shockers, list):
+            all_shockers.extend(shockers)
 
         if not all_shockers:
             raise OpenShockError("No shockers found")

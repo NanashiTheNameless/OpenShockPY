@@ -2,6 +2,7 @@ import json
 
 import pytest
 from OpenShockPY.async_client import AsyncOpenShockClient
+from OpenShockPY.client import OpenShockError
 
 respx = pytest.importorskip("respx")
 httpx = pytest.importorskip("httpx")
@@ -57,4 +58,39 @@ async def test_shock_all_success():
     assert len(body["shocks"]) == 2
     assert {s["id"] for s in body["shocks"]} == {"s1", "s2"}
 
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_shock_all_flat_shockers():
+    client = AsyncOpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+
+    respx.get("https://api.openshock.app/1/shockers/own").respond(
+        200,
+        json={"shockers": [{"id": "s1"}], "message": ""},
+    )
+
+    post_route = respx.post("https://api.openshock.app/2/shockers/control").respond(
+        200, json={"ok": True}
+    )
+
+    data = await client.beep_all(duration=400)
+    assert data.get("ok") is True  # type: ignore
+
+    assert post_route.calls
+    call = post_route.calls[-1]
+    body = json.loads(call.request.content)
+    assert isinstance(body, dict)
+    assert len(body["shocks"]) == 1
+    assert body["shocks"][0]["id"] == "s1"
+
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_async_intensity_validation():
+    client = AsyncOpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    with pytest.raises(OpenShockError):
+        await client.shock("s1", intensity=200)
     await client.aclose()

@@ -135,6 +135,7 @@ class OpenShockClient:
         """
         self.base_url = base_url.rstrip(" /")
         self.timeout = timeout
+        self.user_agent = ""
         self._session = requests.Session()
 
         self._session.headers.setdefault("Content-Type", "application/json")
@@ -311,6 +312,8 @@ class OpenShockClient:
         Raises:
             OpenShockError: If the API returns an error status code.
         """
+        if intensity < 0 or intensity > 100:
+            raise OpenShockError("intensity must be between 0 and 100")
         duration = max(300, min(65535, duration))
         payload = {
             "shocks": [
@@ -447,12 +450,18 @@ class OpenShockClient:
         """
         # Get all shockers
         shockers_response = self.list_shockers(api_key=api_key)
-        devices = shockers_response.get("data", [])
+        all_shockers: List[Dict[str, Any]] = []
+        data = shockers_response.get("data", [])
+        if isinstance(data, list):
+            for entry in data:
+                if isinstance(entry, dict) and "shockers" in entry:
+                    all_shockers.extend(entry.get("shockers", []))
+                else:
+                    all_shockers.append(entry)
 
-        # Extract all shockers from all devices
-        all_shockers = []
-        for device in devices:
-            all_shockers.extend(device.get("shockers", []))
+        shockers = shockers_response.get("shockers", [])
+        if isinstance(shockers, list):
+            all_shockers.extend(shockers)
 
         if not all_shockers:
             raise OpenShockError("No shockers found")

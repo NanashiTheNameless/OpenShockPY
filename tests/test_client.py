@@ -70,6 +70,38 @@ def test_send_action_validation_error(requests_mock):
         client.shock("s1", intensity=150, duration=500)
 
 
+def test_send_action_all_flat_shockers(requests_mock):
+    client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    requests_mock.when(
+        "GET",
+        "https://api.openshock.app/1/shockers/own",
+        DummyResponse(200, {"shockers": [{"id": "s1"}]}),
+    )
+    requests_mock.when(
+        "POST",
+        "https://api.openshock.app/2/shockers/control",
+        DummyResponse(200, {"ok": True}),
+    )
+
+    data = client.vibrate_all(intensity=20, duration=700)
+    assert data.get("ok") is True
+
+    # POST should include the single shocker id
+    method, url, kwargs = requests_mock.calls[-1]
+    assert method == "POST"
+    assert url == "https://api.openshock.app/2/shockers/control"
+    body = kwargs["json"]
+    assert isinstance(body, dict)
+    assert "shocks" in body
+    assert body["shocks"][0]["id"] == "s1"
+
+
+def test_negative_intensity_rejected():
+    client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    with pytest.raises(OpenShockError):
+        client.vibrate("s1", intensity=-5)
+
+
 def test_shock_vibrate_beep_success(requests_mock):
     client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
     # Control endpoint
