@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from OpenShockPY.client import OpenShockClient, OpenShockError
+from OpenShockPY.client import OpenShockClient, OpenShockPYError
 
 
 class DummyResponse:
@@ -66,7 +66,7 @@ def test_list_shockers_success(requests_mock):
 
 def test_send_action_validation_error(requests_mock):
     client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
-    with pytest.raises(OpenShockError):
+    with pytest.raises(OpenShockPYError):
         client.shock("s1", intensity=150, duration=500)
 
 
@@ -98,8 +98,20 @@ def test_send_action_all_flat_shockers(requests_mock):
 
 def test_negative_intensity_rejected():
     client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
-    with pytest.raises(OpenShockError):
+    with pytest.raises(OpenShockPYError):
         client.vibrate("s1", intensity=-5)
+
+
+def test_send_action_all_intensity_rejected():
+    client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    with pytest.raises(OpenShockPYError):
+        client.shock_all(intensity=101)
+
+
+def test_send_action_all_duration_rejected():
+    client = OpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    with pytest.raises(OpenShockPYError):
+        client.shock_all(duration=200)
 
 
 def test_shock_vibrate_beep_success(requests_mock):

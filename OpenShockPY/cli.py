@@ -7,13 +7,13 @@ import sys
 
 import keyring  # type: ignore
 
-from .client import OpenShockClient, OpenShockError
+from .client import OpenShockClient, OpenShockPYError
 
 
 def get_stored_api_key() -> str:
     """Get API key from keyring storage."""
     if keyring is None:
-        raise OpenShockError(
+        raise OpenShockPYError(
             "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
         )
     api_key = keyring.get_password("openshock", "api_key")
@@ -23,7 +23,7 @@ def get_stored_api_key() -> str:
 def set_stored_api_key(api_key: str) -> None:
     """Store API key in keyring."""
     if keyring is None:
-        raise OpenShockError(
+        raise OpenShockPYError(
             "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
         )
     keyring.set_password("openshock", "api_key", api_key)
@@ -77,7 +77,7 @@ def main() -> int:
         if args.command == "login":
             api_key = args.api_key or input("Enter your OpenShock API key: ").strip()
             if not api_key:
-                raise OpenShockError("API key is required")
+                raise OpenShockPYError("API key is required")
             set_stored_api_key(api_key)
             print("API key stored successfully in system keyring")
             return 0
@@ -86,7 +86,7 @@ def main() -> int:
         if args.command == "logout":
             try:
                 if keyring is None:
-                    raise OpenShockError(
+                    raise OpenShockPYError(
                         "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
                     )
                 keyring.delete_password("openshock", "api_key")
@@ -102,7 +102,7 @@ def main() -> int:
         if not api_key:
             api_key = get_stored_api_key()
             if not api_key:
-                raise OpenShockError(
+                raise OpenShockPYError(
                     "No API key found. Use 'python -m OpenShockPY.cli login' or set OPENSHOCK_API_KEY environment variable"
                 )
 
@@ -118,28 +118,28 @@ def main() -> int:
             data = client.list_shockers(args.device_id)
         elif args.command == "shock":
             if not args.shocker_id:
-                raise OpenShockError("--shocker-id is required for shock")
+                raise OpenShockPYError("--shocker-id is required for shock")
             if args.shocker_id.lower() == "all":
                 data = client.shock_all(args.intensity, args.duration)
             else:
                 data = client.shock(args.shocker_id, args.intensity, args.duration)
         elif args.command == "vibrate":
             if not args.shocker_id:
-                raise OpenShockError("--shocker-id is required for vibrate")
+                raise OpenShockPYError("--shocker-id is required for vibrate")
             if args.shocker_id.lower() == "all":
                 data = client.vibrate_all(args.intensity, args.duration)
             else:
                 data = client.vibrate(args.shocker_id, args.intensity, args.duration)
         elif args.command == "beep":
             if not args.shocker_id:
-                raise OpenShockError("--shocker-id is required for beep")
+                raise OpenShockPYError("--shocker-id is required for beep")
             if args.shocker_id.lower() == "all":
                 data = client.beep_all(args.duration)
             else:
                 data = client.beep(args.shocker_id, args.duration)
         elif args.command == "stop":
             if not args.shocker_id:
-                raise OpenShockError("--shocker-id is required for stop")
+                raise OpenShockPYError("--shocker-id is required for stop")
             if args.shocker_id.lower() == "all":
                 data = client.stop_all()
             else:
@@ -147,7 +147,7 @@ def main() -> int:
         if data is not None:
             print(json.dumps(data, indent=2))
         return 0
-    except OpenShockError as e:
+    except OpenShockPYError as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 

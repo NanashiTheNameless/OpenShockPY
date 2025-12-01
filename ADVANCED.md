@@ -8,13 +8,14 @@ This section lists all public definitions in the library and how to use them.
 
 ### Module overview
 
-- `OpenShockPY.__init__`: re-exports `OpenShockClient`, `OpenShockError`.
-- `OpenShockPY.client`: core HTTP client and error handling.
+- `OpenShockPY.__init__`: re-exports `OpenShockClient`, `OpenShockPYError`, and optionally `AsyncOpenShockClient` (if httpx is installed).
+- `OpenShockPY.client`: core HTTP client and error handling using `requests`.
+- `OpenShockPY.async_client`: optional async HTTP client using `httpx` (requires `async` extras).
 - `OpenShockPY.cli`: optional command-line interface (not needed when using the library directly).
 
 ### Public API (library)
 
-- `class OpenShockError(Exception)`: raised for non-2xx HTTP responses or client precondition errors.
+- `class OpenShockPYError(Exception)`: raised for non-2xx HTTP responses or client precondition errors.
 
 - `class OpenShockClient(api_key: Optional[str] = None, base_url: str = "https://api.openshock.app", timeout: int = 15, user_agent: Optional[str] = None)`
   - Creates a reusable client with a shared `requests.Session`.
@@ -80,7 +81,7 @@ This section lists all public definitions in the library and how to use them.
 
   - `send_action(shocker_id: str, control_type: str, intensity: int = 0, duration: int = 1000, exclusive: bool = False, api_key: Optional[str] = None) -> Any`
     - Low-level method to send a control command. `control_type` is one of `"Shock"`, `"Vibrate"`, `"Sound"`, `"Stop"`.
-    - `duration` is clamped to 300–65535 ms. Intensity is passed through; the API expects 0–100 (use 0 for `Sound`).
+    - Validates `intensity` (0-100) and `duration` (300-65535 ms), raising `OpenShockPYError` if out of range.
     - Example (send Stop):
 
       ```python
@@ -162,7 +163,7 @@ This section lists all public definitions in the library and how to use them.
 ### Typical usage pattern
 
 ```python
-from OpenShockPY import OpenShockClient, OpenShockError
+from OpenShockPY import OpenShockClient, OpenShockPYError
 
 client = OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0")
 
@@ -208,6 +209,67 @@ The `AsyncOpenShockClient` mirrors the synchronous `OpenShockClient` API but pro
 pip install Nanashi-OpenShockPY[async]
 ```
 
+#### AsyncOpenShockClient API
+
+- `class AsyncOpenShockClient(api_key: Optional[str] = None, base_url: str = "https://api.openshock.app", timeout: int = 15, user_agent: Optional[str] = None)`
+  - Creates an asynchronous client using `httpx.AsyncClient` for non-blocking HTTP requests.
+  - A User-Agent is required; set via constructor (`user_agent=`) or `SetUA()` before any request.
+  - Supports async context manager protocol (`async with`) for automatic resource cleanup.
+  - **Note**: Unlike `OpenShockClient`, there is no `SetBaseURL()` method; set the URL via the constructor only.
+
+  - `SetUA(user_agent: str) -> None`
+    - Set/update the `User-Agent` header. Required before any API call.
+
+  - `SetAPIKey(api_key: Optional[str]) -> None`
+    - Set or clear the API key used for authenticated requests.
+
+  - `async aclose() -> None`
+    - Close the underlying `httpx.AsyncClient`. Called automatically when using context manager.
+
+  - `async list_devices(api_key: Optional[str] = None) -> Dict[str, Any]`
+    - List all devices for the authenticated account.
+
+  - `async get_device(device_id: str, api_key: Optional[str] = None) -> Dict[str, Any]`
+    - Get details for a single device by ID.
+
+  - `async list_shockers(device_id: Optional[str] = None, api_key: Optional[str] = None) -> Dict[str, Any]`
+    - List shockers you own, or only those attached to a given device if `device_id` is provided.
+
+  - `async get_shocker(shocker_id: str, api_key: Optional[str] = None) -> Dict[str, Any]`
+    - Get details for a single shocker by ID.
+
+  - `async send_action(shocker_id: str, control_type: str, intensity: int = 0, duration: int = 1000, exclusive: bool = False, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Low-level method to send a control command. `control_type` is one of `"Shock"`, `"Vibrate"`, `"Sound"`, `"Stop"`.
+    - Validates `intensity` (0-100) and `duration` (300-65535 ms).
+
+  - `async shock(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper for `send_action(..., control_type="Shock")`.
+
+  - `async vibrate(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper for `send_action(..., control_type="Vibrate")`.
+
+  - `async beep(shocker_id: str, duration: int = 300, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper for `send_action(..., control_type="Sound", intensity=0)`.
+
+  - `async stop(shocker_id: str, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper for `send_action(..., control_type="Stop")`. Stops all actions on the shocker.
+
+  - `async send_action_all(control_type: str, intensity: int = 0, duration: int = 1000, exclusive: bool = False, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Send an action command to all shockers. Automatically fetches all shockers and sends the command to each one.
+    - Validates parameters and raises `OpenShockPYError` if no shockers are found.
+
+  - `async shock_all(intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper to shock all shockers at once.
+
+  - `async vibrate_all(intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper to vibrate all shockers at once.
+
+  - `async beep_all(duration: int = 300, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper to beep all shockers at once.
+
+  - `async stop_all(api_key: Optional[str] = None) -> Optional[Dict[str, Any]]`
+    - Convenience wrapper to stop all actions on all shockers.
+
 Example:
 
 ```python
@@ -215,8 +277,27 @@ import asyncio
 from OpenShockPY import AsyncOpenShockClient
 
 async def main():
-  async with AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0") as client:
-    await client.shock_all(intensity=50, duration=1000)
+    # Using context manager (recommended)
+    async with AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0") as client:
+        # List devices and shockers
+        devices = await client.list_devices()
+        shockers = await client.list_shockers()
+        
+        # Act on a single shocker
+        await client.vibrate("shocker-uuid", intensity=25, duration=1500)
+        await client.stop("shocker-uuid")
+        
+        # Act on all shockers at once
+        await client.shock_all(intensity=50, duration=1000)
+        await client.stop_all()
+    # Client is automatically closed when exiting the context manager
+
+    # Or manage lifecycle manually
+    client = AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0")
+    try:
+        await client.shock_all(intensity=50, duration=1000)
+    finally:
+        await client.aclose()
 
 asyncio.run(main())
 ```
@@ -225,7 +306,7 @@ asyncio.run(main())
 
 ## Client fundamentals
 
-- **User-Agent is required**: `OpenShockClient` will raise `OpenShockError` if you call the API without setting a User-Agent (set via constructor or `SetUA`).
+- **User-Agent is required**: `OpenShockClient` will raise `OpenShockPYError` if you call the API without setting a User-Agent (set via constructor or `SetUA`).
 - **Base URL**: defaults to `https://api.openshock.app`; you can change it with `SetBaseURL("https://api.openshock.dev")` or via the constructor.
 - **Timeout**: default request timeout is 15 seconds.
 - **Session reuse**: a single `requests.Session` is used to share connection pooling and headers across calls.
@@ -259,12 +340,12 @@ asyncio.run(main())
   }
   ```
   
-- Duration is clamped to **300–65535 ms**. Intensity is passed through; the API expects 0–100.
+- Both sync and async clients validate `intensity` (0-100) and `duration` (300-65535 ms), raising `OpenShockPYError` if values are out of range.
 - `exclusive` defaults to `False`; set to `True` when you need exclusive control.
 
 ## Error handling
 
-- Non-2xx responses raise `OpenShockError` with the HTTP status and any parsed JSON body (falls back to raw text).
+- Non-2xx responses raise `OpenShockPYError` with the HTTP status and any parsed JSON body (falls back to raw text).
 - Empty 2xx responses return `None`; otherwise JSON is returned as parsed Python data.
 
 ## CLI details

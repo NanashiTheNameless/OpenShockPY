@@ -2,7 +2,7 @@ import json
 
 import pytest
 from OpenShockPY.async_client import AsyncOpenShockClient
-from OpenShockPY.client import OpenShockError
+from OpenShockPY.client import OpenShockPYError
 
 respx = pytest.importorskip("respx")
 httpx = pytest.importorskip("httpx")
@@ -91,6 +91,14 @@ async def test_shock_all_flat_shockers():
 @pytest.mark.asyncio
 async def test_async_intensity_validation():
     client = AsyncOpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
-    with pytest.raises(OpenShockError):
+    with pytest.raises(OpenShockPYError):
         await client.shock("s1", intensity=200)
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_async_all_duration_validation():
+    client = AsyncOpenShockClient(api_key="abc", user_agent="OpenShockPY-Test/0.1")
+    with pytest.raises(OpenShockPYError):
+        await client.vibrate_all(duration=200)
     await client.aclose()

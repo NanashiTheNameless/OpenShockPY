@@ -7,7 +7,7 @@ from .client import (
     DeviceListResponse,
     DeviceResponse,
     OpenShockClient,
-    OpenShockError,
+    OpenShockPYError,
     Shocker,
     ShockerListResponse,
     ShockerResponse,
@@ -23,7 +23,7 @@ __all__ = [
     "OpenShockClient",
     # Async client may not be available if optional deps aren't installed
     "AsyncOpenShockClient",
-    "OpenShockError",
+    "OpenShockPYError",
     # Type definitions for IDE autocompletion
     "Device",
     "DeviceListResponse",

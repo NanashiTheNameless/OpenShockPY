@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Literal, Optional, TypedDict
 import requests
 
 
-class OpenShockError(Exception):
+class OpenShockPYError(Exception):
     """Exception raised for OpenShock API errors."""
 
     pass
@@ -157,7 +157,17 @@ class OpenShockClient:
             payload = resp.json()
         except Exception:
             payload = {"message": resp.text}
-        raise OpenShockError(f"HTTP {resp.status_code}: {payload}")
+        raise OpenShockPYError(f"HTTP {resp.status_code}: {payload}")
+
+    def _validate_action_params(self, intensity: int, duration: int) -> None:
+        if intensity < 0 or intensity > 100:
+            raise OpenShockPYError(
+                "Validation failed: intensity must be between 0 and 100"
+            )
+        if duration < 300 or duration > 65535:
+            raise OpenShockPYError(
+                "Validation failed: duration must be between 300 and 65535 milliseconds"
+            )
 
     def _get_headers(self, api_key: Optional[str] = None) -> Dict[str, Any]:
         """Get headers for API requests.
@@ -192,7 +202,7 @@ class OpenShockClient:
 
     def _ensure_user_agent(self) -> None:
         if not self.user_agent:
-            raise OpenShockError(
+            raise OpenShockPYError(
                 "User-Agent must be set via SetUA before using the client"
             )
 
@@ -310,11 +320,9 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
-        if intensity < 0 or intensity > 100:
-            raise OpenShockError("intensity must be between 0 and 100")
-        duration = max(300, min(65535, duration))
+        self._validate_action_params(intensity, duration)
         payload = {
             "shocks": [
                 {
@@ -355,7 +363,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action(
             shocker_id, "Shock", intensity, duration, False, api_key
@@ -381,7 +389,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action(
             shocker_id, "Vibrate", intensity, duration, False, api_key
@@ -402,7 +410,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action(shocker_id, "Sound", 0, duration, False, api_key)
 
@@ -420,7 +428,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action(shocker_id, "Stop", 0, 300, False, api_key)
 
@@ -446,8 +454,9 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
+        self._validate_action_params(intensity, duration)
         # Get all shockers
         shockers_response = self.list_shockers(api_key=api_key)
         all_shockers: List[Dict[str, Any]] = []
@@ -464,9 +473,8 @@ class OpenShockClient:
             all_shockers.extend(shockers)
 
         if not all_shockers:
-            raise OpenShockError("No shockers found")
+            raise OpenShockPYError("No shockers found")
 
-        duration = max(300, min(65535, duration))
         shocks_list = [
             {
                 "id": shocker["id"],
@@ -509,7 +517,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action_all("Shock", intensity, duration, False, api_key)
 
@@ -531,7 +539,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action_all("Vibrate", intensity, duration, False, api_key)
 
@@ -549,7 +557,7 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action_all("Sound", 0, duration, False, api_key)
 
@@ -564,6 +572,6 @@ class OpenShockClient:
             response has no content (HTTP 204 No Content).
 
         Raises:
-            OpenShockError: If the API returns an error status code.
+            OpenShockPYError: If the API returns an error status code.
         """
         return self.send_action_all("Stop", 0, 300, False, api_key)

@@ -93,9 +93,10 @@ import asyncio
 from OpenShockPY import AsyncOpenShockClient
 
 async def main():
-   async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0") as client:
-      devices = await client.list_devices()
-      await client.shock_all(intensity=50, duration=1000)
+    async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0") as client:
+        devices = await client.list_devices()
+        await client.shock_all(intensity=50, duration=1000)
+        await client.stop_all()
 
 asyncio.run(main())
 ```
@@ -106,8 +107,9 @@ asyncio.run(main())
 
 - Library only (most people): `pip install Nanashi-OpenShockPY`
 - Library + CLI extras (adds keyring): `pip install "Nanashi-OpenShockPY[cli]"`
-- Library + CLI extras + Potential future deps: `pip install "Nanashi-OpenShockPY[all]"`
-- Development/editable install from this repo: `pip install -e .` (or `pip install -e ".[cli]"` for CLI)
+- Library + Async extras (adds httpx, pytest-asyncio, respx): `pip install "Nanashi-OpenShockPY[async]"`
+- Library + all extras: `pip install "Nanashi-OpenShockPY[all]"`
+- Development/editable install from this repo: `pip install -e .` (or `pip install -e ".[cli]"` for CLI, `pip install -e ".[all]"` for all extras)
 
 ## Responsible use and licensing
 

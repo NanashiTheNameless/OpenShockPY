@@ -6,7 +6,7 @@ import httpx  # type: ignore
 
 from .client import (
     ControlType,
-    OpenShockError,
+    OpenShockPYError,
 )
 
 
@@ -26,6 +26,7 @@ class AsyncOpenShockClient:
         async with AsyncOpenShockClient(api_key="KEY", user_agent="MyApp/1.0") as client:
             devices = await client.list_devices()
             await client.shock_all(intensity=50, duration=1000)
+            await client.stop_all()
 
     asyncio.run(main())
     ```
@@ -46,14 +47,13 @@ class AsyncOpenShockClient:
         self.timeout = timeout
         self.api_key = api_key
         self.user_agent: Optional[str] = None
-        self._client = httpx.AsyncClient(timeout=timeout)
+        self._client = httpx.AsyncClient(timeout=timeout, follow_redirects=True)
 
         self._client.headers.setdefault("Content-Type", "application/json")
         self._client.headers.setdefault("Accept", "application/json")
         if user_agent is not None:
             self.SetUA(user_agent)
-        if api_key:
-            self._client.headers["Open-Shock-Token"] = api_key
+        self.SetAPIKey(api_key)
 
     def _url(self, path: str) -> str:
         return f"{self.base_url}{path}"
@@ -67,7 +67,7 @@ class AsyncOpenShockClient:
             payload = resp.json()
         except Exception:
             payload = {"message": resp.text}
-        raise OpenShockError(f"HTTP {resp.status_code}: {payload}")
+        raise OpenShockPYError(f"HTTP {resp.status_code}: {payload}")
 
     def _get_headers(self, api_key: Optional[str] = None) -> Dict[str, Any]:
         self._ensure_user_agent()
@@ -79,9 +79,17 @@ class AsyncOpenShockClient:
             headers.pop("Open-Shock-Token", None)
         return headers
 
+    def _validate_action_params(self, intensity: int, duration: int) -> None:
+        if intensity < 0 or intensity > 100:
+            raise OpenShockPYError("intensity must be between 0 and 100")
+        if duration < 300 or duration > 65535:
+            raise OpenShockPYError(
+                "duration must be between 300 and 65535 milliseconds"
+            )
+
     def _ensure_user_agent(self) -> None:
         if not self.user_agent:
-            raise OpenShockError(
+            raise OpenShockPYError(
                 "User-Agent must be set via SetUA before using the client"
             )
 
@@ -91,6 +99,23 @@ class AsyncOpenShockClient:
             raise ValueError("user_agent must be provided to SetUA")
         self.user_agent = user_agent
         self._client.headers["User-Agent"] = user_agent
+
+    def SetAPIKey(self, api_key: Optional[str]) -> None:
+        """Store the API key in memory and refresh headers/cookies."""
+        self.api_key = api_key
+        if api_key:
+            self._client.headers["Open-Shock-Token"] = api_key
+            # Some deployments expect the token as a cookie; set both.
+            host = httpx.URL(self.base_url).host
+            self._client.cookies.set(
+                "Open-Shock-Token",
+                api_key,
+                domain=host or None,
+                path="/",
+            )
+        else:
+            self._client.headers.pop("Open-Shock-Token", None)
+            self._client.cookies.pop("Open-Shock-Token", None)
 
     async def aclose(self) -> None:
         await self._client.aclose()
@@ -148,9 +173,7 @@ class AsyncOpenShockClient:
         exclusive: bool = False,
         api_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
-        if intensity < 0 or intensity > 100:
-            raise OpenShockError("intensity must be between 0 and 100")
-        duration = max(300, min(65535, duration))
+        self._validate_action_params(intensity, duration)
         payload = {
             "shocks": [
                 {
@@ -210,6 +233,7 @@ class AsyncOpenShockClient:
         exclusive: bool = False,
         api_key: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
+        self._validate_action_params(intensity, duration)
         # Get all shockers
         shockers_response = await self.list_shockers(api_key=api_key)
         devices = shockers_response.get("data", [])
@@ -228,9 +252,8 @@ class AsyncOpenShockClient:
             all_shockers.extend(shockers)
 
         if not all_shockers:
-            raise OpenShockError("No shockers found")
+            raise OpenShockPYError("No shockers found")
 
-        duration = max(300, min(65535, duration))
         shocks_list = [
             {
                 "id": shocker["id"],
