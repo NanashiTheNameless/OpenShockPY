@@ -32,7 +32,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 
    client = OpenShockClient(
        api_key="YOUR_API_KEY",
-       user_agent="YourAppName/1.0",
+       user_agent="YourAppName/YourAppVersion",
    )
    ```
 
@@ -41,11 +41,9 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
    ```python
    print(client.list_devices())
    client.shock("YOUR_SHOCKER_ID", intensity=50, duration=1000)
-   client.stop("YOUR_SHOCKER_ID")  # Stop all actions
    
    # Or send to all shockers at once
    client.shock_all(intensity=50, duration=1000)
-   client.stop_all()
    ```
 
 ## Optional CLI (no coding needed)
@@ -79,7 +77,7 @@ The CLI automatically sets an appropriate User-Agent.
 
 ## Async client (opt-in)
 
-If you prefer non-blocking operation, there is an asynchronous client available: `AsyncOpenShockClient`.
+If you prefer non-blocking operation, there is an experimental asynchronous client available: `AsyncOpenShockClient`.
 Install the optional dependencies:
 
 ```bash
@@ -93,10 +91,9 @@ import asyncio
 from OpenShockPY import AsyncOpenShockClient
 
 async def main():
-    async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0") as client:
+    async with AsyncOpenShockClient(api_key="YOUR_API_KEY", user_agent="v") as client:
         devices = await client.list_devices()
         await client.shock_all(intensity=50, duration=1000)
-        await client.stop_all()
 
 asyncio.run(main())
 ```

@@ -26,7 +26,7 @@ This section lists all public definitions in the library and how to use them.
     - Example:
 
       ```python
-      client.SetUA("YourApp/1.0")
+      client.SetUA("YourAppName/YourAppVersion")
       ```
 
   - `SetBaseURL(base_url: str) -> None`
@@ -165,7 +165,7 @@ This section lists all public definitions in the library and how to use them.
 ```python
 from OpenShockPY import OpenShockClient, OpenShockPYError
 
-client = OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourApp/1.0")
+client = OpenShockClient(api_key="YOUR_API_KEY", user_agent="YourAppName/YourAppVersion")
 
 # Enumerate
 devices = client.list_devices()
@@ -278,7 +278,7 @@ from OpenShockPY import AsyncOpenShockClient
 
 async def main():
     # Using context manager (recommended)
-    async with AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0") as client:
+    async with AsyncOpenShockClient(api_key="KEY", user_agent="YourAppName/YourAppVersion") as client:
         # List devices and shockers
         devices = await client.list_devices()
         shockers = await client.list_shockers()
@@ -293,7 +293,7 @@ async def main():
     # Client is automatically closed when exiting the context manager
 
     # Or manage lifecycle manually
-    client = AsyncOpenShockClient(api_key="KEY", user_agent="YourApp/1.0")
+    client = AsyncOpenShockClient(api_key="KEY", user_agent="YourAppName/YourAppVersion")
     try:
         await client.shock_all(intensity=50, duration=1000)
     finally:
