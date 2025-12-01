@@ -1,4 +1,4 @@
-# OpenShock Python
+# OpenShock Python [![Ask DeepWiki](<https://deepwiki.com/badge.svg>)](<https://deepwiki.com/NanashiTheNameless/OpenShockPY>)
 
 Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use for anyone, with optional advanced controls for developers.
 
