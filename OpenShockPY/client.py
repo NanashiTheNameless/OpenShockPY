@@ -371,7 +371,7 @@ class OpenShockClient:
         """Trigger a shock action.
 
         Args:
-            shocker_id: The unique identifier of the shocker.
+            shocker_id: The unique identifier of the shocker, or "all" to shock all shockers.
             intensity: Intensity level (0-100, default 50).
             duration: Duration in milliseconds (300-65535, default 1000).
             api_key: Optional API key to use instead of the stored one.
@@ -383,6 +383,8 @@ class OpenShockClient:
         Raises:
             OpenShockPYError: If the API returns an error status code.
         """
+        if shocker_id.lower() == "all":
+            return self.shock_all(intensity, duration, api_key)
         return self.send_action(
             shocker_id, "Shock", intensity, duration, False, api_key
         )
@@ -397,7 +399,7 @@ class OpenShockClient:
         """Trigger a vibrate action.
 
         Args:
-            shocker_id: The unique identifier of the shocker.
+            shocker_id: The unique identifier of the shocker, or "all" to vibrate all shockers.
             intensity: Intensity level (0-100, default 50).
             duration: Duration in milliseconds (300-65535, default 1000).
             api_key: Optional API key to use instead of the stored one.
@@ -409,6 +411,8 @@ class OpenShockClient:
         Raises:
             OpenShockPYError: If the API returns an error status code.
         """
+        if shocker_id.lower() == "all":
+            return self.vibrate_all(intensity, duration, api_key)
         return self.send_action(
             shocker_id, "Vibrate", intensity, duration, False, api_key
         )
@@ -419,7 +423,7 @@ class OpenShockClient:
         """Trigger a beep/sound action.
 
         Args:
-            shocker_id: The unique identifier of the shocker.
+            shocker_id: The unique identifier of the shocker, or "all" to beep all shockers.
             duration: Duration in milliseconds (300-65535, default 300).
             api_key: Optional API key to use instead of the stored one.
 
@@ -430,6 +434,8 @@ class OpenShockClient:
         Raises:
             OpenShockPYError: If the API returns an error status code.
         """
+        if shocker_id.lower() == "all":
+            return self.beep_all(duration, api_key)
         return self.send_action(shocker_id, "Sound", 0, duration, False, api_key)
 
     def stop(
@@ -438,7 +444,7 @@ class OpenShockClient:
         """Stop all actions on the shocker.
 
         Args:
-            shocker_id: The unique identifier of the shocker.
+            shocker_id: The unique identifier of the shocker, or "all" to stop all shockers.
             api_key: Optional API key to use instead of the stored one.
 
         Returns:
@@ -448,6 +454,8 @@ class OpenShockClient:
         Raises:
             OpenShockPYError: If the API returns an error status code.
         """
+        if shocker_id.lower() == "all":
+            return self.stop_all(api_key)
         return self.send_action(shocker_id, "Stop", 0, 300, False, api_key)
 
     def send_action_all(

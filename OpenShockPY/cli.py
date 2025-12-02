@@ -109,7 +109,7 @@ def main() -> int:
         with OpenShockClient(
             api_key=api_key,
             base_url=args.base_url,
-            user_agent="OpenShockPY-CLI/0.0.1.2",
+            user_agent="OpenShockPY-CLI/0.0.1.3",
         ) as client:
             data = None
             if args.command == "devices":
