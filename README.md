@@ -42,7 +42,9 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
    print(client.list_devices())
    client.shock("YOUR_SHOCKER_ID", intensity=50, duration=1000)
    
-   # Or send to all shockers at once
+   # Or send to all shockers at once using "all" as the shocker ID
+   client.shock("all", intensity=50, duration=1000)
+   # Alternatively, use the explicit *_all methods
    client.shock_all(intensity=50, duration=1000)
    ```
 

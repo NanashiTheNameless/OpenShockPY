@@ -90,34 +90,46 @@ This section lists all public definitions in the library and how to use them.
 
   - `shock(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Shock")`.
+    - Pass `"all"` as `shocker_id` to shock all shockers (routes to `shock_all()`).
     - Example:
 
       ```python
       client.shock("shocker-uuid", intensity=40, duration=1200)
+      # Or shock all shockers:
+      client.shock("all", intensity=40, duration=1200)
       ```
 
   - `vibrate(shocker_id: str, intensity: int = 50, duration: int = 1000, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Vibrate")`.
+    - Pass `"all"` as `shocker_id` to vibrate all shockers (routes to `vibrate_all()`).
     - Example:
 
       ```python
       client.vibrate("shocker-uuid", intensity=30, duration=800)
+      # Or vibrate all shockers:
+      client.vibrate("all", intensity=30, duration=800)
       ```
 
   - `beep(shocker_id: str, duration: int = 300, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Sound", intensity=0)`.
+    - Pass `"all"` as `shocker_id` to beep all shockers (routes to `beep_all()`).
     - Example:
 
       ```python
       client.beep("shocker-uuid", duration=500)
+      # Or beep all shockers:
+      client.beep("all", duration=500)
       ```
 
   - `stop(shocker_id: str, api_key: Optional[str] = None) -> Any`
     - Convenience wrapper for `send_action(..., control_type="Stop")`. Stops all actions on the shocker.
+    - Pass `"all"` as `shocker_id` to stop all shockers (routes to `stop_all()`).
     - Example:
 
       ```python
       client.stop("shocker-uuid")
+      # Or stop all shockers:
+      client.stop("all")
       ```
 
   - `send_action_all(control_type: str, intensity: int = 0, duration: int = 1000, exclusive: bool = False, api_key: Optional[str] = None) -> Any`
