@@ -28,7 +28,7 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 3. Create a client with a User-Agent and your API key:
 
    ```python
-   from OpenShockPY import OpenShockClient
+   from OpenShockPY import OpenShockClient, OpenShockPYError
 
    client = OpenShockClient(
        api_key="YOUR_API_KEY",
