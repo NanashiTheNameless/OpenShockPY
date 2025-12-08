@@ -399,4 +399,4 @@ asyncio.run(main())
 
 ## License reminder
 
-The project is licensed under **NNCL v1.2-MODIFIED-OpenShockPY**. It allows non-commercial, ethical use, requires source availability for adaptations, and forbids commercial exploitation without a separate license. See [LICENSE.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md>) for the full terms.
+The project is licensed under **NNCL v1.3-MODIFIED-OpenShockPY**. It allows non-commercial, ethical use, requires source availability for adaptations, and forbids commercial exploitation without a separate license. See [LICENSE.md](<https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md>) for the full terms.

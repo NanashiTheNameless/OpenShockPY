@@ -1,4 +1,4 @@
-# Nameless Nanashi Code License (NNCL) v1.2-MODIFIED-OpenShockPY
+# Nameless Nanashi Code License (NNCL) v1.3-MODIFIED-OpenShockPY
 
 **Copyright © 2025 [NamelessNanashi](<https://git.NamelessNanashi.dev/>)**
 
@@ -64,7 +64,7 @@ You may charge **actual, verifiable cost of physical media and postage only**, w
 
 ## 6. Strong Share-Alike (Same License)
 
-Any Adaptation You Share must be licensed **only** under this **NNCL v1.2-MODIFIED-OpenShockPY** (or later) license, in full, with the Policy intact. No other license (including dual-licensing by You) may be applied to the Adaptation You Share, and You may not add field-of-use, patent, or other restrictions conflicting with this license.
+Any Adaptation You Share must be licensed **only** under this **NNCL v1.3-MODIFIED-OpenShockPY** (or later) license, in full, with the Policy intact. No other license (including dual-licensing by You) may be applied to the Adaptation You Share, and You may not add field-of-use, patent, or other restrictions conflicting with this license.
 
 **Network use (including providing functionality via network, SaaS, or API) constitutes Sharing** for the purpose of this section and triggers all obligations above (Attribution, Source, Policy, and Same-License).
 
@@ -72,7 +72,7 @@ Any Adaptation You Share must be licensed **only** under this **NNCL v1.2-MODIFI
 
 Notwithstanding Section 6, You may include the Work (unmodified or as an Adaptation) as a component, library, or dependency within a larger open source project that uses a different open source license, provided that:
 
-1. **Preserved License**: The Work and any direct Adaptations of it remain licensed exclusively under this **NNCL v1.2-MODIFIED-OpenShockPY** license, clearly identified with this complete license text.
+1. **Preserved License**: The Work and any direct Adaptations of it remain licensed exclusively under this **NNCL v1.3-MODIFIED-OpenShockPY** license, clearly identified with this complete license text.
 2. **Separate Identity**: The Work is maintained as a distinct, separately-identifiable component (e.g., as a library, module, package, or clearly-documented dependency) and is not bundled or merged directly into the larger project's codebase in a way that makes attribution or license identification impracticable.
 3. **Clear Notice**: The larger project's documentation (README, NOTICE, or similar) clearly states that the Work is included, identifies it by name, attributes the Licensor, and links to or includes this license.
 4. **Compliance**: All other terms of this license (Sections 2-5, 7-14) remain in full effect for the Work component, including the Non-Commercial requirement, the Policy (Section 4), and attribution obligations.
@@ -138,4 +138,4 @@ If any provision of this license is unenforceable, the remaining provisions rema
 
 ## 14. Entire License; Updates
 
-This is the entire agreement regarding the Work. The Licensor may publish new versions of NNCL; unless the Licensor explicitly states otherwise, Your received Work remains under the version originally applied.
+This is the entire agreement regarding the Work. The Licensor may publish new versions of the NNCL. Each version of the Work remains licensed under the specific NNCL version stated or included at the time of its release. Updates to the NNCL do not retroactively alter the license of previously released versions of the Work. The Licensor may choose to apply a newer NNCL version to subsequent releases of the Work by explicitly doing so in the source code, documentation, or accompanying license file.
