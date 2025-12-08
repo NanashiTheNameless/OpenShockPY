@@ -129,7 +129,9 @@ def main() -> int:
                 if args.shocker_id.lower() == "all":
                     data = client.vibrate_all(args.intensity, args.duration)
                 else:
-                    data = client.vibrate(args.shocker_id, args.intensity, args.duration)
+                    data = client.vibrate(
+                        args.shocker_id, args.intensity, args.duration
+                    )
             elif args.command == "beep":
                 if not args.shocker_id:
                     raise OpenShockPYError("--shocker-id is required for beep")
