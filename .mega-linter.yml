@@ -22,6 +22,7 @@ DISABLE_LINTERS:
   - YAML_YAMLLINT # No YAML files to lint
   - SPELL_CSPELL # Handled sepetately in GitHub Actions
   - PYTHON_MYPY # Not worth effort to make work will fix it eventually
+  - SPELL_LYCHEE # Lychee is having issues with GitHub, Im abandoning it
 
 PYTHON_FLAKE8_CONFIG_FILE: .flake8
 PYTHON_BANDIT_CONFIG_FILE: .bandit
