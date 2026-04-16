@@ -1,9 +1,9 @@
 [project]
 name = "Nanashi-OpenShockPY"
-version = "0.0.1.5"
+version = "0.0.1.6"
 description = "UNOFFICIAL Lightweight Python client for the OpenShock API"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = { text = "NNCL v1.3-MODIFIED-OpenShockPY" }
 
 classifiers = [
@@ -12,8 +12,6 @@ classifiers = [
     "Natural Language :: English",
     "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
