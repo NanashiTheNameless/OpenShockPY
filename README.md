@@ -1,5 +1,13 @@
 # OpenShock Python [![Ask DeepWiki](<https://deepwiki.com/badge.svg>)](<https://deepwiki.com/NanashiTheNameless/OpenShockPY>)
 
+[![PyPI - Version](https://img.shields.io/pypi/v/Nanashi-OpenShockPY)](https://pypi.org/project/Nanashi-OpenShockPY/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Nanashi-OpenShockPY)](https://pypi.org/project/Nanashi-OpenShockPY/)
+[![PyPI - Implementation](https://img.shields.io/pypi/implementation/Nanashi-OpenShockPY)](https://pypi.org/project/Nanashi-OpenShockPY/)
+[![PyPI - Types](https://img.shields.io/pypi/types/Nanashi-OpenShockPY)](https://pypi.org/project/Nanashi-OpenShockPY/)
+
+[![Tests](https://github.com/NanashiTheNameless/OpenShockPY/workflows/Test/badge.svg)](https://github.com/NanashiTheNameless/OpenShockPY/actions/workflows/test.yml)
+
+
 Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use for anyone, with optional advanced controls for developers.
 
 ## What this project offers
