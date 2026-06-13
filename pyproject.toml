@@ -1,6 +1,6 @@
 [project]
 name = "Nanashi-OpenShockPY"
-version = "0.0.2.0"
+version = "0.0.2.1"
 description = "UNOFFICIAL Lightweight Python client for the OpenShock API"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -66,8 +66,11 @@ all = [
 [project.urls]
 Homepage = "https://github.com/NanashiTheNameless/OpenShockPY"
 Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
-"GitHub Sponsor" = "https://github.com/sponsors/NanashiTheNameless"
 "Buy Me a Coffee" = "https://buymeacoffee.com/NamelessNanashi"
+"GitHub Sponsor" = "https://github.com/sponsors/NanashiTheNameless"
+"Ko-Fi" = "https://ko-fi.com/NanashiTheNameless"
+"PayPal" = "https://www.paypal.me/NamelessNanashi"
+"Throne" = "https://throne.com/NamelessNanashi"
 
 [tool.setuptools.package-data]
 OpenShockPY = ["py.typed"]
