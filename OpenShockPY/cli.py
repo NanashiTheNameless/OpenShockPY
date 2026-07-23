@@ -1,38 +1,66 @@
 # This software is licensed under NNCL v1.3-MODIFIED-OpenShockPY see LICENSE.md for more info
 # https://github.com/NanashiTheNameless/OpenShockPY/blob/main/LICENSE.md
+"""Command line interface for OpenShockPY."""
+
 import argparse
 import json
 import os
 import sys
+from typing import Any, List, Optional
 
-import keyring  # type: ignore
+import requests
 
-from .client import OpenShockClient, OpenShockPYError
+from . import __version__
+from ._core import DEFAULT_BASE_URL, DEFAULT_TIMEOUT
+from .client import OpenShockClient, OpenShockPYError, OpenShockValidationError
+
+try:  # keyring is an optional extra
+    import keyring  # type: ignore
+except ImportError:  # pragma: no cover - depends on environment
+    keyring = None  # type: ignore[assignment]
+
+KEYRING_SERVICE = "openshock"
+KEYRING_USERNAME = "api_key"
+_KEYRING_HINT = (
+    "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
+)
+
+
+def _require_keyring() -> Any:
+    if keyring is None:
+        raise OpenShockPYError(_KEYRING_HINT)
+    return keyring
 
 
 def get_stored_api_key() -> str:
-    """Get API key from keyring storage."""
-    if keyring is None:
-        raise OpenShockPYError(
-            "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
-        )
-    api_key = keyring.get_password("openshock", "api_key")
-    return api_key or ""
+    """Get the API key from keyring storage."""
+    return _require_keyring().get_password(KEYRING_SERVICE, KEYRING_USERNAME) or ""
 
 
 def set_stored_api_key(api_key: str) -> None:
-    """Store API key in keyring."""
-    if keyring is None:
-        raise OpenShockPYError(
-            "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
-        )
-    keyring.set_password("openshock", "api_key", api_key)
+    """Store the API key in keyring."""
+    _require_keyring().set_password(KEYRING_SERVICE, KEYRING_USERNAME, api_key)
 
 
-def main() -> int:
+def delete_stored_api_key() -> None:
+    """Remove the API key from keyring, tolerating an already-empty store."""
+    ring = _require_keyring()
+    try:
+        ring.delete_password(KEYRING_SERVICE, KEYRING_USERNAME)
+    except Exception:
+        # Not every backend raises PasswordDeleteError, and some cannot
+        # delete at all; blanking the entry is the portable fallback.
+        ring.set_password(KEYRING_SERVICE, KEYRING_USERNAME, "")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Build the argument parser."""
     parser = argparse.ArgumentParser(
-        prog="python -m OpenShockPY.cli",
-        description="OpenShock Python CLI (run with: python -m OpenShockPY.cli <command>)",
+        prog="openshock",
+        description=(
+            "UNOFFICIAL OpenShock CLI "
+            "(also runnable as: python -m OpenShockPY.cli <command>)"
+        ),
     )
     parser.add_argument(
         "command",
@@ -43,20 +71,27 @@ def main() -> int:
             "vibrate",
             "beep",
             "stop",
+            "pause",
+            "unpause",
+            "logs",
+            "whoami",
+            "tokens",
             "login",
             "logout",
         ],
         help="Command to run",
     )
-    parser.add_argument("--api-key", dest="api_key", help="OpenShock API key")
+    parser.add_argument("--api-key", dest="api_key", help="OpenShock API token")
     parser.add_argument(
         "--base-url",
         dest="base_url",
-        default="https://api.openshock.app",
-        help="Custom API base URL",
+        default=os.getenv("OPENSHOCK_BASE_URL", DEFAULT_BASE_URL),
+        help=f"Custom API base URL (default: {DEFAULT_BASE_URL})",
     )
     parser.add_argument(
-        "--shocker-id", dest="shocker_id", help="Target shocker ID (UUID)"
+        "--shocker-id",
+        dest="shocker_id",
+        help='Target shocker ID (UUID), or "all"',
     )
     parser.add_argument(
         "--device-id", dest="device_id", help="Device ID for filtering shockers"
@@ -70,88 +105,137 @@ def main() -> int:
         default=1000,
         help="Duration in ms (default: 1000, min: 300, max: 65535)",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--exclusive",
+        action="store_true",
+        help="Cancel other running commands on the shocker",
+    )
+    parser.add_argument(
+        "--custom-name",
+        dest="custom_name",
+        help="Name shown to the shocker owner in the control logs",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=DEFAULT_TIMEOUT,
+        help=f"Request timeout in seconds (default: {DEFAULT_TIMEOUT})",
+    )
+    parser.add_argument(
+        "--user-agent",
+        dest="user_agent",
+        default=f"OpenShockPY-CLI/{__version__}",
+        help="User-Agent header sent with requests",
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"OpenShockPY {__version__}"
+    )
+    return parser
+
+
+def _require_shocker_id(args: argparse.Namespace) -> str:
+    if not args.shocker_id:
+        raise OpenShockValidationError(
+            f"--shocker-id is required for {args.command}"
+        )
+    return args.shocker_id
+
+
+def _resolve_api_key(args: argparse.Namespace) -> str:
+    """Resolve the API key from --api-key, the environment, then the keyring."""
+    api_key = args.api_key or os.getenv("OPENSHOCK_API_KEY")
+    if api_key:
+        return api_key
+    api_key = get_stored_api_key() if keyring is not None else ""
+    if not api_key:
+        raise OpenShockPYError(
+            "No API key found. Use 'openshock login', set OPENSHOCK_API_KEY, "
+            "or pass --api-key"
+        )
+    return api_key
+
+
+def _run_command(client: OpenShockClient, args: argparse.Namespace) -> Any:
+    command = args.command
+    if command == "devices":
+        return client.list_devices()
+    if command == "shockers":
+        return client.list_shockers(args.device_id)
+    if command == "whoami":
+        return client.get_self()
+    if command == "tokens":
+        return client.list_tokens()
+    if command == "logs":
+        if args.shocker_id:
+            return client.get_shocker_logs(args.shocker_id)
+        return client.get_logs()
+    if command in ("pause", "unpause"):
+        return client.pause_shocker(_require_shocker_id(args), command == "pause")
+    if command == "shock":
+        return client.shock(
+            _require_shocker_id(args),
+            args.intensity,
+            args.duration,
+            exclusive=args.exclusive,
+            custom_name=args.custom_name,
+        )
+    if command == "vibrate":
+        return client.vibrate(
+            _require_shocker_id(args),
+            args.intensity,
+            args.duration,
+            exclusive=args.exclusive,
+            custom_name=args.custom_name,
+        )
+    if command == "beep":
+        return client.beep(
+            _require_shocker_id(args),
+            args.duration,
+            exclusive=args.exclusive,
+            custom_name=args.custom_name,
+        )
+    if command == "stop":
+        return client.stop(_require_shocker_id(args), custom_name=args.custom_name)
+    raise OpenShockPYError(f"Unknown command: {command}")
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    """CLI entry point. Returns the process exit code."""
+    args = build_parser().parse_args(argv)
 
     try:
-        # Handle login command
         if args.command == "login":
             api_key = args.api_key or input("Enter your OpenShock API key: ").strip()
             if not api_key:
-                raise OpenShockPYError("API key is required")
+                raise OpenShockValidationError("API key is required")
             set_stored_api_key(api_key)
             print("API key stored successfully in system keyring")
             return 0
 
-        # Handle logout command
         if args.command == "logout":
-            try:
-                if keyring is None:
-                    raise OpenShockPYError(
-                        "Keyring not installed. Install with: pip install Nanashi-OpenShockPY[cli]"
-                    )
-                keyring.delete_password("openshock", "api_key")
-                print("API key removed from system keyring")
-            except Exception:
-                # Set to empty string as fallback
-                set_stored_api_key("")
-                print("API key cleared from system keyring")
+            delete_stored_api_key()
+            print("API key removed from system keyring")
             return 0
 
-        # Get API key from: --api-key flag, environment variable, or keyring
-        api_key = args.api_key or os.getenv("OPENSHOCK_API_KEY")
-        if not api_key:
-            api_key = get_stored_api_key()
-            if not api_key:
-                raise OpenShockPYError(
-                    "No API key found. Use 'python -m OpenShockPY.cli login' or set OPENSHOCK_API_KEY environment variable"
-                )
-
         with OpenShockClient(
-            api_key=api_key,
+            api_key=_resolve_api_key(args),
             base_url=args.base_url,
-            user_agent="OpenShockPY-CLI/0.0.2.0",
+            timeout=args.timeout,
+            user_agent=args.user_agent,
         ) as client:
-            data = None
-            if args.command == "devices":
-                data = client.list_devices()
-            elif args.command == "shockers":
-                data = client.list_shockers(args.device_id)
-            elif args.command == "shock":
-                if not args.shocker_id:
-                    raise OpenShockPYError("--shocker-id is required for shock")
-                if args.shocker_id.lower() == "all":
-                    data = client.shock_all(args.intensity, args.duration)
-                else:
-                    data = client.shock(args.shocker_id, args.intensity, args.duration)
-            elif args.command == "vibrate":
-                if not args.shocker_id:
-                    raise OpenShockPYError("--shocker-id is required for vibrate")
-                if args.shocker_id.lower() == "all":
-                    data = client.vibrate_all(args.intensity, args.duration)
-                else:
-                    data = client.vibrate(
-                        args.shocker_id, args.intensity, args.duration
-                    )
-            elif args.command == "beep":
-                if not args.shocker_id:
-                    raise OpenShockPYError("--shocker-id is required for beep")
-                if args.shocker_id.lower() == "all":
-                    data = client.beep_all(args.duration)
-                else:
-                    data = client.beep(args.shocker_id, args.duration)
-            elif args.command == "stop":
-                if not args.shocker_id:
-                    raise OpenShockPYError("--shocker-id is required for stop")
-                if args.shocker_id.lower() == "all":
-                    data = client.stop_all()
-                else:
-                    data = client.stop(args.shocker_id)
+            data = _run_command(client, args)
             if data is not None:
                 print(json.dumps(data, indent=2))
         return 0
     except OpenShockPYError as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
+    except requests.RequestException as e:
+        print(f"Error: request failed: {e}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:  # pragma: no cover - interactive only
+        print("Aborted", file=sys.stderr)
+        return 130
 
 
 if __name__ == "__main__":

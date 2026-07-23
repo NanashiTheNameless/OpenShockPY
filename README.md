@@ -13,6 +13,8 @@ Unofficial, lightweight helper for the OpenShock API. Designed to be easy to use
 ## What this project offers
 
 - Simple Python client to list devices/shockers and send actions (shock, vibrate, beep).
+- Full coverage of the OpenShock v1 and v2 APIs: hubs, shockers, shares, tokens, logs, sessions and account endpoints.
+- Matching synchronous and asynchronous clients with the same method names.
 - Optional CLI for quick checks without writing code.
 - Keeps your API key in memory only; the CLI can store it securely via your system keyring.
 
@@ -77,23 +79,25 @@ pip install "Nanashi-OpenShockPY[cli]"
 Store your API key securely, then list devices:
 
 ```bash
-python -m OpenShockPY.cli login --api-key YOUR_KEY
-python -m OpenShockPY.cli devices
+openshock login --api-key YOUR_KEY
+openshock devices
 ```
 
 Send a command (use a shocker ID, not a device ID):
 
 ```bash
-python -m OpenShockPY.cli shock --shocker-id YOUR_SHOCKER_ID --intensity 40 --duration 1500
+openshock shock --shocker-id YOUR_SHOCKER_ID --intensity 40 --duration 1500
 ```
 
 Or send a command to all shockers at once:
 
 ```bash
-python -m OpenShockPY.cli shock --shocker-id all --intensity 40 --duration 1500
+openshock shock --shocker-id all --intensity 40 --duration 1500
 ```
 
-The CLI automatically sets an appropriate User-Agent.
+Other commands: `shockers`, `vibrate`, `beep`, `stop`, `pause`, `unpause`, `logs`, `whoami`, `tokens`, `logout`.
+
+The CLI automatically sets an appropriate User-Agent. If the `openshock` command is not on your PATH, every example also works as `python -m OpenShockPY.cli <command>`.
 
 ## Async client (opt-in)
 

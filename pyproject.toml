@@ -1,6 +1,10 @@
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "Nanashi-OpenShockPY"
-version = "0.0.2.1"
+version = "0.2.0.0"
 description = "UNOFFICIAL Lightweight Python client for the OpenShock API"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -63,6 +67,9 @@ all = [
 ]
 
 
+[project.scripts]
+openshock = "OpenShockPY.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/NanashiTheNameless/OpenShockPY"
 Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
@@ -72,5 +79,12 @@ Issues = "https://github.com/NanashiTheNameless/OpenShockPY/issues"
 "PayPal" = "https://www.paypal.me/NamelessNanashi"
 "Throne" = "https://throne.com/NamelessNanashi"
 
+[tool.setuptools]
+packages = ["OpenShockPY"]
+
 [tool.setuptools.package-data]
 OpenShockPY = ["py.typed"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+testpaths = ["tests"]
